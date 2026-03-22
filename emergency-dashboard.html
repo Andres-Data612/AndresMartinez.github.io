@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Department Analytics Dashboard</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+
+  <section id="main" style="max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; text-align: left;">
+    
+    <h1>Emergency Department Analytics Dashboard</h1>
+    <p><strong>Tools:</strong> MySQL, Power BI</p>
+    <h2>Downloads</h2>
+
+<ul>
+  <li>
+    <a href="Projects-files/Datacleaning_waittimes.sql" download>
+      📄 Download SQL Code
+    </a>
+  </li>
+
+  <li>
+    <a href="Projects-files/emergency-dashboard.pbix" download>
+      📊 Download Power BI File
+    </a>
+  </li>
+</ul>
+
+    <p>
+      This project analyzes weekly Emergency Department (A&E) performance using NHS Scotland data to evaluate
+      compliance with national wait-time targets and understand how patient volume impacts operational outcomes. 
+</p>
+      The analysis focused on identifying trends in wait-time breaches, comparing performance across treatment 
+      locations, and evaluating how attendance levels influence system pressure. Data was cleaned and transformed 
+      in MySQL before being modeled and visualized in Power BI using weighted KPIs to ensure accurate representation 
+      of patient experience.
+    </p>
+
+    <p>
+      The dashboard includes KPI tracking, drillthrough functionality, and interactive
+      visual elements designed to make complex performance trends easier to understand.
+    </p>
+
+    <p>
+      <a href="https://github.com/Andres-Data612/emergency-department-wait-times-analysis"
+         target="_blank"
+         rel="noopener noreferrer">
+        View GitHub Repository
+      </a>
+    </p>
+
+    <hr />
+
+    <h2>Dashboard Screenshots</h2>
+
+   <div class="screenshot-gallery">
+  <img src="emergency-project-images/Overview.png" alt="Emergency Dashboard Overview" />
+  <img src="emergency-project-images/Deailed.png" alt="Emergency Dashboard KPI View" />
+  <img src="emergency-project-images/Trends.png" alt="Emergency Dashboard Trend Analysis" />
+</div>
+
+<style>
+  .screenshot-gallery img {
+    width: 100%;
+    max-width: 900px;
+    display: block;
+    margin: 0 0 2rem 0;
+    border-radius: 8px;
+  }
+</style>
+
+    <hr />
+
+    <h2>Key Insight & Findings</h2>
+    <ul>
+    <h2>1. Decline in 4-Hour Target performance</h2>
+    <ul>
+      <li>Weighted compliance with the 4-hour target declined significantly over time</li>
+      <li>Sharp drop observed post-2020, indicating increased system strain</li>
+      <li>Recovery after this period was limited, suggesting sustained operational pressure</li>
+    </ul>
+
+   <h2>2. Attendance Volume Drives Performance</h2>
+<ul>
+   <li>Confirms that demand pressure is a primary driver of performance decline</li>
+  <li>
+    Higher attendance periods correlate with:
+    <ul>
+      <li>Increased wait-time breaches</li>
+      <li>Lower 4-hour compliance rates</li>
+    </ul>
+</ul>
+
+    <h2>3. Performance Varies Across Locations</h2>
+<ul>
+  <li>Significant variation exists between treatment locations</li>
+  <li>Some sites consistently outperform others, even under similar demand levels</li>
+  <li>
+    Indicates potential differences in:
+    <ul>
+      <li>Operational efficiency</li>
+      <li>Staffing</li>
+      <li>Capacity management</li>
+    </ul>
+  </li>
+</ul>
+</ul>
+     <h2>4. Long Waits Concentrated in Specific Sites</h2>
+    <ul>
+      <li>8-hour and 12-hour breaches are not evenly distributed</li>
+      <li>A small number of locations contribute disproportionately to severe delays</li>
+      <li>These sites represent key targets for operational intervention</li>
+</ul>
+       <h2>5. Weighted KPIs Reveal True Performance</h2>
+    <ul>
+      <li>Using weighted metrics changed the interpretation of results</li>
+      <li>High-volume sites had a larger impact on overall performance</li>
+      <li>Prevented misleading conclusions that would occur with simple averages</li>
+    </ul>
+       <h2>Key Takeaways</h2>
+    <ul>
+      <li>Patient volume is the strongest driver of wait-time performance</li>
+      <li>Weighted KPIs are essential for accurate healthcare analytics</li>
+      <li>System-wide performance masks significant location-level variation</li>
+      <li>Targeted interventions should focus on high-volume, low-performing sites</li>
+      <li>Post-2020 trends suggest long-term strain rather than temporary disruption</li>
+
+
+    </ul>
+
+    <p>
+      <a href="index.html">← Back to Portfolio</a>
+    </p>
+
+  </section>
+
+</body>
+</html>
