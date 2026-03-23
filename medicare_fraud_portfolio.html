@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medicare Fraud Detection | Andres Martinez</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1F4E79;
+    --navy-dark: #0d2d4a;
+    --navy-light: #2E75B6;
+    --red: #C00000;
+    --red-light: #FF4444;
+    --gold: #FFC000;
+    --ice: #EBF3FB;
+    --ice-mid: #BDD7EE;
+    --white: #FFFFFF;
+    --off-white: #F8FAFD;
+    --gray: #595959;
+    --gray-light: #e8eef4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--navy-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31,78,121,0.6) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,0,0,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red-light);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 130px);
+    line-height: 0.9;
+    color: var(--white);
+    letter-spacing: 2px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+
+  .hero h1 span {
+    color: var(--red-light);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ice-mid);
+    font-weight: 300;
+    margin-top: 32px;
+    max-width: 560px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.6s;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 60px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.8s;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    border-left: 3px solid var(--red-light);
+    padding-left: 20px;
+  }
+
+  .hero-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .hero-stat .label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ice-mid);
+    font-weight: 300;
+    margin-top: 4px;
+  }
+
+  .hero-tools {
+    display: flex;
+    gap: 12px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 1s;
+  }
+
+  .tool-badge {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--ice-mid);
+    padding: 8px 18px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .tool-badge:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 1.2s;
+  }
+
+  .scroll-hint::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 60px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    color: var(--navy-dark);
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+
+  /* ── PROBLEM / SOLUTION ── */
+  .problem-solution {
+    background: var(--white);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .ps-block {
+    padding: 80px 60px;
+  }
+
+  .ps-block.problem {
+    background: var(--navy-dark);
+    color: white;
+  }
+
+  .ps-block.solution {
+    background: var(--navy);
+    color: white;
+  }
+
+  .ps-block .section-title {
+    color: white;
+  }
+
+  .ps-icon {
+    width: 56px; height: 56px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .ps-block.problem .ps-icon { background: var(--red); }
+  .ps-block.solution .ps-icon { background: rgba(255,255,255,0.15); }
+
+  .ps-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ice-mid);
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+
+  .ps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ps-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--ice-mid);
+    line-height: 1.6;
+  }
+
+  .ps-list li::before {
+    content: '→';
+    color: var(--red-light);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .ps-block.solution .ps-list li::before {
+    color: var(--gold);
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline { background: var(--off-white); }
+
+  .pipeline-steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .step {
+    padding: 40px 24px;
+    border-right: 1px solid var(--gray-light);
+    position: relative;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step:hover {
+    background: var(--navy);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(31,78,121,0.2);
+    z-index: 2;
+  }
+
+  .step:hover .step-num,
+  .step:hover .step-title,
+  .step:hover .step-desc { color: white; }
+
+  .step:hover .step-num { color: var(--red-light); }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gray-light);
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--navy);
+    margin-bottom: 12px;
+    transition: color 0.3s;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.6;
+    font-weight: 300;
+    transition: color 0.3s;
+  }
+
+  /* ── DASHBOARD SECTION ── */
+  .dashboard-section { background: var(--navy-dark); }
+
+  .dashboard-section .section-title { color: white; }
+  .dashboard-section .section-label { color: var(--red-light); }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .dash-page {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 28px 20px;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .dash-page:hover {
+    background: var(--red);
+    border-color: var(--red);
+    transform: translateY(-4px);
+  }
+
+  .dash-page-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: rgba(255,255,255,0.2);
+    line-height: 1;
+    margin-bottom: 12px;
+    transition: color 0.3s;
+  }
+
+  .dash-page:hover .dash-page-num { color: rgba(255,255,255,0.4); }
+
+  .dash-page-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .dash-page-desc {
+    font-size: 12px;
+    color: var(--ice-mid);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .dash-page:hover .dash-page-desc { color: rgba(255,255,255,0.8); }
+
+  .dashboard-img-placeholder {
+    background: rgba(255,255,255,0.03);
+    border: 2px dashed rgba(255,255,255,0.1);
+    border-radius: 4px;
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: rgba(255,255,255,0.2);
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .dashboard-img-placeholder .icon { font-size: 48px; opacity: 0.3; }
+
+  .dashboard-img-placeholder p { font-size: 11px; text-align: center; line-height: 1.8; }
+
+  /* ── FINDINGS ── */
+  .findings { background: var(--white); }
+
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .finding-card {
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .finding-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--navy);
+  }
+
+  .finding-card.red::before { background: var(--red); }
+  .finding-card.gold::before { background: var(--gold); }
+
+  .finding-card:hover {
+    box-shadow: 0 12px 40px rgba(31,78,121,0.12);
+    transform: translateY(-2px);
+  }
+
+  .finding-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .finding-card.red .finding-num { color: var(--red); }
+  .finding-card.gold .finding-num { color: var(--gold); }
+
+  .finding-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .finding-desc {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ── SKILLS ── */
+  .skills { background: var(--off-white); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .skill-card {
+    background: var(--white);
+    border-radius: 4px;
+    padding: 36px 28px;
+    border: 1px solid var(--gray-light);
+    transition: all 0.3s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--navy);
+    box-shadow: 0 8px 32px rgba(31,78,121,0.1);
+  }
+
+  .skill-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .skill-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .skill-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .skill-items li {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .skill-items li::before {
+    content: '▸';
+    color: var(--navy-light);
+    flex-shrink: 0;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* ── SCORING MODEL ── */
+  .scoring { background: var(--navy); }
+
+  .scoring .section-title { color: white; }
+  .scoring .section-label { color: var(--gold); }
+
+  .scoring-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .score-formula {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 36px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ice-mid);
+    line-height: 2;
+  }
+
+  .score-formula .comment { color: rgba(255,255,255,0.3); }
+  .score-formula .highlight { color: var(--gold); font-weight: 500; }
+  .score-formula .var { color: var(--red-light); }
+
+  .tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tier {
+    border-radius: 4px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .tier.high { background: rgba(192,0,0,0.2); border: 1px solid rgba(192,0,0,0.4); }
+  .tier.medium { background: rgba(255,192,0,0.15); border: 1px solid rgba(255,192,0,0.3); }
+  .tier.low { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+
+  .tier-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    min-width: 80px;
+  }
+
+  .tier.high .tier-score { color: var(--red-light); }
+  .tier.medium .tier-score { color: var(--gold); }
+  .tier.low .tier-score { color: rgba(255,255,255,0.4); }
+
+  .tier-info .tier-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .tier-info .tier-count {
+    font-size: 13px;
+    color: var(--ice-mid);
+  }
+
+  /* ── TECH STACK ── */
+  .tech { background: var(--white); }
+
+  .tech-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .tech-item {
+    padding: 40px 32px;
+    border-right: 1px solid var(--gray-light);
+    transition: all 0.3s;
+  }
+
+  .tech-item:last-child { border-right: none; }
+
+  .tech-item:hover { background: var(--ice); }
+
+  .tech-item-icon { font-size: 36px; margin-bottom: 16px; }
+
+  .tech-item-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+  }
+
+  .tech-item-role {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy-dark);
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: white;
+    letter-spacing: 2px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+  }
+
+  .footer-links a {
+    color: var(--ice-mid);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--red-light); }
+
+  .footer-disclaimer {
+    width: 100%;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    font-style: italic;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 24px;
+    line-height: 1.7;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { padding: 60px 32px; }
+    section { padding: 60px 32px; }
+    .problem-solution { grid-template-columns: 1fr; }
+    .pipeline-steps { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    .findings-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .scoring-grid { grid-template-columns: 1fr; }
+    .tech-row { grid-template-columns: repeat(2, 1fr); }
+    footer { padding: 40px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-tag">Portfolio Project · Healthcare Analytics · 2024</div>
+  <h1>Medicare<span>Fraud</span>Detection</h1>
+  <p class="hero-sub">A provider-level anomaly detection system using statistical Z-score analysis to identify high-risk billing behavior across 691,000+ Medicare providers.</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num">13.6M+</div>
+      <div class="label">Records Analyzed</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">$36B+</div>
+      <div class="label">Medicare Payments</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">130</div>
+      <div class="label">High Risk Providers</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">6</div>
+      <div class="label">Fraud Indicators</div>
+    </div>
+  </div>
+
+  <div class="hero-tools">
+    <span class="tool-badge">MySQL 8.0</span>
+    <span class="tool-badge">Power BI</span>
+    <span class="tool-badge">Z-Score Analysis</span>
+    <span class="tool-badge">CMS Open Data</span>
+    <span class="tool-badge">DAX</span>
+    <span class="tool-badge">SQL Views</span>
+  </div>
+
+  <div class="scroll-hint">Scroll to explore</div>
+</section>
+
+<!-- ── PROBLEM / SOLUTION ── -->
+<div class="problem-solution">
+  <div class="ps-block problem reveal">
+    <div class="ps-icon">⚠️</div>
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">Fraud at Scale</h2>
+    <p class="ps-text">Medicare processes hundreds of billions in claims annually, making it a prime target for fraud, waste, and abuse. With 691,000+ active providers, traditional manual auditing cannot keep up.</p>
+    <ul class="ps-list">
+      <li>Fraudulent billing hides within normal-looking claim patterns over time</li>
+      <li>Random or complaint-driven auditing misses systemic fraud for years</li>
+      <li>No single metric can reveal fraud — multi-dimensional analysis is required</li>
+      <li>Investigators lack a data-driven system to prioritize where to look first</li>
+    </ul>
+  </div>
+  <div class="ps-block solution reveal">
+    <div class="ps-icon">✅</div>
+    <div class="section-label">The Solution</div>
+    <h2 class="section-title">Data-Driven Risk Scoring</h2>
+    <p class="ps-text">An automated anomaly detection pipeline that scores every Medicare provider against their specialty and state peer group — turning 13.6M rows of raw claims data into a prioritized audit list.</p>
+    <ul class="ps-list">
+      <li>Peer benchmarking by specialty + state for fair comparison</li>
+      <li>6 fraud indicators calculated per provider from raw billing data</li>
+      <li>Z-score outlier detection flags statistically abnormal billing behavior</li>
+      <li>Weighted composite risk score ranks all 691K+ providers 0–100</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ── PIPELINE ── -->
+<section class="pipeline">
+  <div class="section-label reveal">How It Works</div>
+  <h2 class="section-title reveal">The 6-Stage Pipeline</h2>
+  <div class="pipeline-steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Data Ingestion</div>
+      <div class="step-desc">Loaded 13.6M+ rows of CMS Medicare Part B & Part D data into MySQL, resolving formatting errors and currency inconsistencies.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Peer Groups</div>
+      <div class="step-desc">Grouped each provider into a peer cohort by specialty type and state — ensuring apples-to-apples comparison.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Feature Engineering</div>
+      <div class="step-desc">Calculated 6 fraud indicators per provider: services per beneficiary, payment per service, charge ratio, drug cost, claims rate, and cost per claim.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Z-Score Analysis</div>
+      <div class="step-desc">Measured how many standard deviations each provider's metrics fall above their peer group. Z ≥ 3 triggers a fraud flag.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-title">Risk Scoring</div>
+      <div class="step-desc">Combined all 6 Z-scores into a weighted composite fraud risk score from 0–100, classifying providers into High, Medium, and Low tiers.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-title">Dashboard</div>
+      <div class="step-desc">Built a 5-page interactive Power BI dashboard enabling investigators to explore results by state, specialty, and individual provider.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DASHBOARD ── -->
+
+<script>
+  function showDashboard(imageName, clickedCard) {
+    const img = document.getElementById("dashboardImage");
+    img.src = imageName;
+
+    const cards = document.querySelectorAll(".dash-page");
+    cards.forEach(card => card.classList.remove("active"));
+
+    clickedCard.classList.add("active");
+  }
+</script>
+
+<section class="dashboard-section">
+  <div class="section-label">Power BI Dashboard</div>
+  <h2 class="section-title">5 Pages. Full Drill-Down.</h2>
+
+  <div class="dashboard-grid reveal">
+    <div class="dash-page active" onclick="showDashboard('Medicare-fraud-images/Project_Overview.png', this)">
+      <div class="dash-page-num">01</div>
+      <div class="dash-page-title">Project Overview</div>
+      <div class="dash-page-desc">Landing page with project summary, total providers analyzed, and key statistics.</div>
+    </div>
+
+    <div class="dash-page" onclick="showDashboard('Medicare-fraud-images/Executive_Summary.png', this)">
+      <div class="dash-page-num">02</div>
+      <div class="dash-page-title">Executive Summary</div>
+      <div class="dash-page-desc">KPI cards, risk tier distribution, top specialties and states by risk score.</div>
+    </div>
+
+    <div class="dash-page" onclick="showDashboard('Medicare-fraud-images/Provider_Drilldown.png', this)">
+      <div class="dash-page-num">03</div>
+      <div class="dash-page-title">Provider Drilldown</div>
+      <div class="dash-page-desc">Searchable ranked table of all providers with scores, flags, and specialty filters.</div>
+    </div>
+
+    <div class="dash-page" onclick="showDashboard('Medicare-fraud-images/Geographic_Analysis.png', this)">
+      <div class="dash-page-num">04</div>
+      <div class="dash-page-title">Geographic Analysis</div>
+      <div class="dash-page-desc">Bubble map and state-level bar charts showing geographic concentration of risk.</div>
+    </div>
+
+    <div class="dash-page" onclick="showDashboard('Medicare-fraud-images/Metric_Deep_Dive.png', this)">
+      <div class="dash-page-num">05</div>
+      <div class="dash-page-title">Metric Deep Dive</div>
+      <div class="dash-page-desc">Scatter plots, Z-score breakdowns, flag distributions, and outlier identification.</div>
+    </div>
+  </div>
+
+  <div class="dashboard-img-container reveal" style="text-align: center; margin-top: 2rem;">
+  <img 
+    id="dashboardImage" 
+    src="Medicare-fraud-images/Project_Overview.png" 
+    alt="Dashboard Preview"
+    style="display: block; margin: 0 auto; width: 100%; max-width: 1100px; border-radius: 10px;"
+  />
+</div>
+
+  <!-- IMAGE DISPLAY -->
+  <div class="dashboard-img-container reveal">
+    <img id="dashboardImage" src="" alt="Dashboard Preview">
+  </div>
+</section>
+
+<!-- ── KEY FINDINGS ── -->
+<section class="findings">
+  <div class="section-label reveal">Results</div>
+  <h2 class="section-title reveal">Key Findings</h2>
+  <div class="findings-grid reveal">
+    <div class="finding-card red">
+      <div class="finding-num">130</div>
+      <div class="finding-label">High Risk Providers Flagged</div>
+      <div class="finding-desc">Out of 691,000+ Medicare providers analyzed, 130 were classified as High Risk — the top priority audit targets based on statistical outlier behavior.</div>
+    </div>
+    <div class="finding-card gold">
+      <div class="finding-num">538</div>
+      <div class="finding-label">Providers with 3+ Flags</div>
+      <div class="finding-desc">538 providers triggered 3 or more simultaneous fraud flags, indicating multi-dimensional anomalous billing across both Part B and Part D.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">25.66</div>
+      <div class="finding-label">Highest Single Z-Score</div>
+      <div class="finding-desc">The highest single metric Z-score in the dataset — drug cost per beneficiary for an Emergency Medicine provider in Arizona. 25 standard deviations above peers.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">WY</div>
+      <div class="finding-label">Highest Risk State</div>
+      <div class="finding-desc">Wyoming had the highest average fraud risk score among all 50 US states. California and Pennsylvania had the most High Risk providers by count.</div>
+    </div>
+    <div class="finding-card red">
+      <div class="finding-num">7.97</div>
+      <div class="finding-label">Top Provider Z-Score</div>
+      <div class="finding-desc">The top flagged provider had a services-per-beneficiary Z-score of 7.97 and a drug cost Z-score of 11.01 — extreme outliers in both Part B and Part D billing.</div>
+    </div>
+    <div class="finding-card gold">
+      <div class="finding-num">$36B</div>
+      <div class="finding-label">Total Payments Analyzed</div>
+      <div class="finding-desc">The full dataset represents over $36 billion in Medicare payments across all 50 US states and Washington DC for the 2023 calendar year.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCORING MODEL ── -->
+<section class="scoring">
+  <div class="section-label">Methodology</div>
+  <h2 class="section-title">The Risk Scoring Model</h2>
+  <div class="scoring-grid reveal">
+    <div class="score-formula">
+      <div class="comment">// Composite Fraud Risk Score (0–100)</div>
+      <div class="comment">// Z-scores capped at 5 to prevent single outliers dominating</div>
+      <br>
+      <div><span class="highlight">Risk Score</span> =</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_services_per_bene|)</span> / 5 × <span class="highlight">20</span> +</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_payment_per_service|)</span> / 5 × <span class="highlight">20</span> +</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_charge_to_payment|)</span> / 5 × <span class="highlight">10</span> +</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_drug_cost_per_bene|)</span> / 5 × <span class="highlight">20</span> +</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_claims_per_bene|)</span> / 5 × <span class="highlight">20</span> +</div>
+      <div>&nbsp;&nbsp;<span class="var">MIN(5, |z_drug_cost_per_claim|)</span> / 5 × <span class="highlight">10</span></div>
+      <br>
+      <div class="comment">// Maximum possible score: 100</div>
+    </div>
+    <div class="tiers">
+      <div style="color: var(--ice-mid); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 8px;">Risk Classification</div>
+      <div class="tier high">
+        <div class="tier-score">60+</div>
+        <div class="tier-info">
+          <div class="tier-name">🔴 High Risk</div>
+          <div class="tier-count">130 providers · Priority audit target</div>
+        </div>
+      </div>
+      <div class="tier medium">
+        <div class="tier-score">30+</div>
+        <div class="tier-info">
+          <div class="tier-name">🟡 Medium Risk</div>
+          <div class="tier-count">7,900 providers · Monitor for trends</div>
+        </div>
+      </div>
+      <div class="tier low">
+        <div class="tier-score">0+</div>
+        <div class="tier-info">
+          <div class="tier-name">🟢 Low Risk</div>
+          <div class="tier-count">683,473 providers · Normal billing behavior</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section class="skills">
+  <div class="section-label reveal">Skills Demonstrated</div>
+  <h2 class="section-title reveal">What This Project Shows</h2>
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-title">Data Engineering</div>
+      <ul class="skill-items">
+        <li>Ingested 13.6M+ rows from CMS government open data into MySQL</li>
+        <li>Resolved currency formatting, type conversion, and schema design at scale</li>
+        <li>Built 6 layered SQL views from raw data to final risk scores</li>
+        <li>Filtered invalid state codes and standardized to 50 US states + DC</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-title">Advanced SQL</div>
+      <ul class="skill-items">
+        <li>Peer group aggregations using GROUP BY, AVG, STD functions</li>
+        <li>Z-score calculations using statistical SQL expressions</li>
+        <li>CASE statements, NULLIF, LEAST for weighted scoring logic</li>
+        <li>Multi-table JOINs across Part B and Part D datasets</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📊</div>
+      <div class="skill-title">Statistical Analysis</div>
+      <ul class="skill-items">
+        <li>Applied Z-score methodology to detect provider-level outliers</li>
+        <li>Designed peer benchmarking groups by specialty and state</li>
+        <li>Built a weighted composite scoring model with 6 indicators</li>
+        <li>Classified 691K+ providers into risk tiers using statistical thresholds</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📈</div>
+      <div class="skill-title">Power BI & DAX</div>
+      <ul class="skill-items">
+        <li>Built a 5-page interactive dashboard with slicers, maps, and drill-downs</li>
+        <li>Created 12+ DAX measures for KPIs and dynamic calculations</li>
+        <li>Designed geographic bubble maps for state-level risk analysis</li>
+        <li>Applied conditional formatting and color-coded risk tiers throughout</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🏥</div>
+      <div class="skill-title">Domain Knowledge</div>
+      <ul class="skill-items">
+        <li>Understood CMS data structure, NPI identifiers, and HCPCS codes</li>
+        <li>Translated Medicare billing patterns into fraud risk indicators</li>
+        <li>Scoped analysis appropriately with compliance-aware disclaimers</li>
+        <li>Identified non-standard state codes (territories, military addresses)</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📁</div>
+      <div class="skill-title">Documentation & Communication</div>
+      <ul class="skill-items">
+        <li>Written Problem & Solution document for stakeholder audiences</li>
+        <li>GitHub repository with full SQL code, README, and architecture docs</li>
+        <li>Consistent visual style guide applied across all dashboard pages</li>
+        <li>Translated technical findings into business-ready audit insights</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── TECH STACK ── -->
+<section class="tech">
+  <div class="section-label reveal">Technology</div>
+  <h2 class="section-title reveal">Tech Stack</h2>
+  <div class="tech-row reveal">
+    <div class="tech-item">
+      <div class="tech-item-icon">🐬</div>
+      <div class="tech-item-name">MySQL 8.0</div>
+      <div class="tech-item-role">Data storage, cleaning, aggregation, Z-score calculation, and all 6 SQL views</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-item-icon">📊</div>
+      <div class="tech-item-name">Microsoft Power BI</div>
+      <div class="tech-item-role">Interactive 5-page dashboard with DAX measures, maps, scatter plots, and drill-downs</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-item-icon">🏛️</div>
+      <div class="tech-item-name">CMS Open Data</div>
+      <div class="tech-item-role">Medicare Part B (5.6M rows) and Part D (8M+ rows) publicly available provider-level data</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-item-icon">📐</div>
+      <div class="tech-item-name">Z-Score Analysis</div>
+      <div class="tech-item-role">Peer group outlier detection using population standard deviation for fair specialty comparison</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+ 
+<footer>
+   <div class="footer-links">
+    <a href="website.html">← Back to Portfolio</a>
+  </div>
+  <div style="margin-top: 1rem;">
+  <a href="Medicare-fraud-files/CMS Data.sql" 
+     download 
+     style="margin-right: 20px; color: #fff; text-decoration: none;">
+    📄 SQL Code
+  </a>
+
+  <a href="Medicare-fraud-files/CMS Viz.pbix" 
+     target="_blank"
+     style="color: #fff; text-decoration: none;">
+    📊 Power BI File
+  </a>
+</div>
+  <div class="footer-disclaimer">
+    This project uses publicly available data from the Centers for Medicare & Medicaid Services (CMS). All findings are statistical in nature and do not constitute allegations of fraud or wrongdoing against any provider. This project is intended for educational and portfolio purposes only.
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
