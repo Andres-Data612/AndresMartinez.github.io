@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Performance & Profitability Analysis | Portfolio</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F5F4FF;
+      color: #26215C;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page { max-width: 860px; margin: 0 auto; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #CECBF6;
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; color: #534AB7; letter-spacing: 0.04em; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { font-size: 14px; color: #7F77DD; text-decoration: none; }
+    .nav-links a:hover { color: #534AB7; }
+
+    .hero {
+      background: #EEEDFE;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #CECBF6;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #534AB7; color: #EEEDFE;
+      font-size: 11px; font-weight: 700;
+      padding: 4px 14px; border-radius: 20px;
+      margin-bottom: 1rem; letter-spacing: 0.07em; text-transform: uppercase;
+    }
+    .hero h1 { font-size: 28px; font-weight: 700; color: #26215C; line-height: 1.3; margin-bottom: 0.75rem; }
+    .hero p { font-size: 15px; color: #3C3489; line-height: 1.75; max-width: 640px; }
+    .pitch { background: #534AB7; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; }
+    .pitch-label { color: #AFA9EC; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
+    .pitch p { color: #EEEDFE; font-size: 15px; line-height: 1.65; font-style: italic; }
+    .hero-actions { display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; padding: 10px 20px;
+      border-radius: 8px; text-decoration: none; border: none; cursor: pointer;
+    }
+    .btn-primary { background: #534AB7; color: #EEEDFE; }
+    .btn-secondary { background: #fff; color: #534AB7; border: 1px solid #AFA9EC; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 2rem; }
+    .kpi { background: #fff; border-radius: 12px; padding: 1.1rem 1.25rem; border: 1px solid #CECBF6; }
+    .kpi-label { font-size: 11px; font-weight: 700; color: #7F77DD; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+    .kpi-value { font-size: 26px; font-weight: 700; color: #26215C; }
+    .kpi-sub { font-size: 12px; color: #AFA9EC; margin-top: 4px; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title {
+      font-size: 11px; font-weight: 700; color: #534AB7;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1rem; padding-bottom: 8px;
+      border-bottom: 2px solid #CECBF6;
+    }
+
+    .img-note {
+      background: #fff; border: 1px dashed #AFA9EC;
+      border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+    }
+    .img-note p { font-size: 13px; color: #3C3489; line-height: 1.7; }
+    .img-note code { background: #EEEDFE; color: #534AB7; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+    .walkthrough { display: flex; flex-direction: column; gap: 1.5rem; }
+    .walk-item { background: #fff; border-radius: 14px; border: 1px solid #CECBF6; overflow: hidden; }
+    .walk-img-wrap {
+      background: #EEEDFE; border-bottom: 1px solid #CECBF6;
+      position: relative; min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .walk-img-wrap img { width: 100%; height: auto; display: block; }
+    .walk-placeholder {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 8px; padding: 2.5rem; width: 100%;
+    }
+    .walk-placeholder-icon { font-size: 32px; }
+    .walk-placeholder-label { font-size: 13px; font-weight: 600; color: #7F77DD; text-align: center; }
+    .walk-placeholder-hint { font-size: 12px; color: #AFA9EC; text-align: center; }
+    .step-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: #534AB7; color: #EEEDFE;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .walk-body { padding: 1.25rem 1.5rem; }
+    .walk-title { font-size: 16px; font-weight: 700; color: #26215C; margin-bottom: 6px; }
+    .walk-desc { font-size: 13px; color: #3C3489; line-height: 1.65; }
+    .walk-insight {
+      margin-top: 10px; background: #EEEDFE;
+      border-radius: 8px; padding: 0.6rem 0.9rem;
+      font-size: 12px; color: #534AB7; font-weight: 700;
+    }
+    .walk-insight span { font-weight: 400; color: #3C3489; }
+
+    .finding-list { display: flex; flex-direction: column; gap: 10px; }
+    .finding {
+      background: #fff; border-left: 3px solid #AFA9EC;
+      border-radius: 0 10px 10px 0; padding: 0.9rem 1.1rem;
+      border-top: 1px solid #EEEDFE; border-right: 1px solid #EEEDFE; border-bottom: 1px solid #EEEDFE;
+    }
+    .finding.highlight { border-left-color: #534AB7; background: #EEEDFE; }
+    .finding-tag {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 2px 9px; border-radius: 20px; margin-bottom: 7px;
+    }
+    .tag-red { background: #FBEAF0; color: #993556; }
+    .tag-purple { background: #EEEDFE; color: #534AB7; }
+    .tag-amber { background: #FAEEDA; color: #854F0B; }
+    .finding-title { font-size: 14px; font-weight: 600; color: #26215C; margin-bottom: 5px; }
+    .finding-body { font-size: 13px; color: #3C3489; line-height: 1.65; }
+
+    .rec-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .rec { background: #fff; border-radius: 12px; padding: 1.1rem 1.25rem; border: 1px solid #CECBF6; }
+    .rec-priority {
+      font-size: 11px; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; display: inline-block; margin-bottom: 9px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .priority-high { background: #534AB7; color: #EEEDFE; }
+    .priority-med  { background: #CECBF6; color: #3C3489; }
+    .rec-title { font-size: 14px; font-weight: 600; color: #26215C; margin-bottom: 5px; }
+    .rec-body { font-size: 13px; color: #3C3489; line-height: 1.6; }
+    .rec-impact { font-size: 12px; color: #7F77DD; margin-top: 6px; font-weight: 700; }
+
+    .method-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .method { background: #fff; border-radius: 12px; padding: 1.1rem; border: 1px solid #CECBF6; text-align: center; }
+    .method-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+    .method-name { font-size: 13px; font-weight: 600; color: #26215C; margin-bottom: 4px; }
+    .method-desc { font-size: 12px; color: #7F77DD; line-height: 1.5; }
+
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-tag {
+      background: #EEEDFE; border: 1px solid #AFA9EC;
+      color: #3C3489; font-size: 13px; font-weight: 500;
+      padding: 6px 14px; border-radius: 20px;
+    }
+
+    footer {
+      text-align: center; padding: 2rem 0 0;
+      border-top: 1px solid #CECBF6; margin-top: 1rem;
+    }
+    footer p { font-size: 13px; color: #AFA9EC; line-height: 1.9; }
+    footer a { color: #534AB7; text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .rec-grid { grid-template-columns: 1fr; }
+      .method-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .hero h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <nav>
+    <span class="nav-logo">&#128200; Portfolio Project</span>
+    <ul class="nav-links">
+      <li><a href="#findings">Findings</a></li>
+      <li><a href="#recommendations">Recommendations</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">Excel Analytics</div>
+    <h1>Sales Performance &amp; Profitability Analysis</h1>
+    <p>A full end-to-end business analysis of a mid-size retail company from 3,000 rows of messy raw data to executive-ready insights, built entirely in Microsoft Excel.</p>
+    <div class="pitch">
+      <span class="pitch-label">The pitch</span>
+      <p>"I uncovered $798K in margin leakage by analyzing sales performance across products, regions, and sales reps for a mid-size retail company."</p>
+    </div>
+    <div class="hero-actions">
+      <a href="Sales-files/Sales_Performance_Analysis_master.xlsx" class="btn btn-primary">&#8595; Download Excel File</a>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value">$8.7M</div>
+      <div class="kpi-sub">FY 2024 Actuals</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Gross Margin</div>
+      <div class="kpi-value">38%</div>
+      <div class="kpi-sub">$3.3M in GM dollars</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Margin Leakage</div>
+      <div class="kpi-value">$798K</div>
+      <div class="kpi-sub">From aggressive discounting</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">vs Target</div>
+      <div class="kpi-value">-2%</div>
+      <div class="kpi-sub">$9.1M target missed</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Transactions</div>
+      <div class="kpi-value">3,000</div>
+      <div class="kpi-sub">Across 5 regions</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg Order Value</div>
+      <div class="kpi-value">$3,010</div>
+      <div class="kpi-sub">Revenue per order</div>
+    </div>
+  </div>
+
+    <div class="walk-item">
+  <div class="walk-img-wrap">
+    <img src="Sales-images/Sale_Performance_Dashboard.png"
+         alt="Executive Dashboard"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+    
+    <div class="walk-placeholder" style="display:none;">
+      <div class="walk-placeholder-icon">&#128203;</div>
+    </div>
+  </div>
+
+  
+
+  <div class="walk-body">
+    <div class="walk-title">Executive Dashboard</div>
+    <div class="walk-desc">
+      A single-page view of all critical KPIs, total revenue, gross margin, vs target, and average order value. Built with linked formulas and conditional formatting.
+    </div>
+    <div class="walk-insight">
+      Skill: <span>Executive communication, dashboard design, dynamic formula linking</span>
+    </div>
+  </div>
+</div>
+<div style="height: 30px;"></div> 
+
+
+      <div class="walk-item">
+        <div class="walk-img-wrap">
+          <img src="Sales-images/Sale_performance_marginleak.png" alt="Discount Analysis" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+          <div class="walk-placeholder" style="display:none;">
+            <div class="walk-placeholder-icon">&#128181;</div>
+          </div>
+        </div>
+        <div class="walk-body">
+          <div class="walk-title">Discount Impact &amp; Margin Leakage</div>
+          <div class="walk-desc">Transactions bucketed by discount rate (0–5%, 5–10%, 10–20%, 20–30%, 30–45%) to quantify how much gross margin is lost at each tier. Formula: Revenue Lost = Quantity × (List Price − Sale Price). Margin Lost = Revenue Lost × GM%.</div>
+          <div class="walk-insight">Finding: <span>Discounts above 20% account for $547K — 68% of the total $798K margin leakage</span></div>
+        </div>
+      </div>
+
+<div style="height: 30px;"></div>
+
+      <div class="walk-item">
+        <div class="walk-img-wrap">
+          <img src="Sales-images/Sale_performance_Product.png" alt="Product Profitability" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+          <div class="walk-placeholder" style="display:none;">
+          </div>
+        </div>
+        <div class="walk-body">
+          <div class="walk-title">Product Profitability &amp; Category Mix</div>
+          <div class="walk-desc">All 25 products analyzed by revenue, COGS, gross margin %, and units sold. A GAP column (% of Margin − % of Revenue) surfaces which categories punch above or below their revenue weight. Electronics flagged as a margin drag with an 8-point negative gap.</div>
+          <div class="walk-insight">Finding: <span>Laptop Pro 15 at 23% GM% and Robot Vacuum at 26% GM% are the lowest-margin products in the portfolio</span></div>
+        </div>
+      </div>
+<div style="height: 30px;"></div> 
+
+      <div class="walk-item">
+        <div class="walk-img-wrap">
+          <img src="Sales-images/Sale_Performance_Region.png" alt="Sales Rep Performance" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+          <div class="walk-placeholder" style="display:none;">
+          </div>
+        </div>
+        <div class="walk-body">
+          <div class="walk-title">Sales Rep Performance by Region</div>
+          <div class="walk-desc">All 15 reps ranked by gross margin dollars, not just revenue to separate genuine high performers from discount-heavy closers. A Revenue Efficiency score (GM$ ÷ Target$) was added. Conditional formatting flags reps more than 10% above or below target in green and red.</div>
+          <div class="walk-insight">Finding: <span>Southeast reps Frank Dunn and Elena Voss both run 36% GM%, the lowest in the company</span></div>
+        </div>
+      </div>
+<div style="height: 30px;"></div> 
+
+      <div class="walk-item">
+        <div class="walk-img-wrap">
+          <img src="Sales-images/Sale_Performance_Monthly.png" alt="Monthly Trend Chart" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+          <div class="walk-placeholder" style="display:none;">
+          </div>
+        </div>
+        <div class="walk-body">
+          <div class="walk-title">Monthly Revenue &amp; Margin Trend</div>
+          <div class="walk-desc">Jan–Dec revenue and gross margin plotted as a dual-line chart to surface seasonality. May recorded the highest revenue month at $892K. Gross margin % improves in Q4-December hits 41% suggesting reduced discounting behaviour when reps are under quota pressure at year-end.</div>
+          <div class="walk-insight">Finding: <span>Replicating Q4 discount discipline year-round could add 2–3pp to annual company-wide GM%</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<div style="height: 30px;"></div> 
+
+  <!-- FINDINGS -->
+  <div class="section" id="findings">
+    <div class="section-title">Key Findings</div>
+    <div class="finding-list">
+      <div class="finding highlight">
+        <span class="finding-tag tag-red">Critical</span>
+        <div class="finding-title">$798K in margin leakage detected</div>
+        <div class="finding-body">Discounts above 20% account for $547K of total leakage 68% of the total. The 30–45% bucket had 806 orders with no approval ceiling. Implementing a 15% cap could recover $300K–$500K annually.</div>
+      </div>
+      <div class="finding">
+        <span class="finding-tag tag-purple">Product</span>
+        <div class="finding-title">Electronics is the biggest margin drag</div>
+        <div class="finding-body">Electronics drives 39% of revenue but only 31% of gross margin, an 8-point gap. The Laptop Pro 15 (23% GM%) and Robot Vacuum (26% GM%) are primary culprits due to high COGS and aggressive field discounting.</div>
+      </div>
+      <div class="finding">
+        <span class="finding-tag tag-red">Regional</span>
+        <div class="finding-title">Southeast underperformed target by 10%</div>
+        <div class="finding-body">The worst regional performance. Frank Dunn leads Southeast in revenue but carries only 36% GM%, suggesting discount-led selling behaviour rather than value based selling.</div>
+      </div>
+      <div class="finding">
+        <span class="finding-tag tag-amber">Seasonality</span>
+        <div class="finding-title">May spike and Q4 margin recovery identified</div>
+        <div class="finding-body">May hit $892K peak revenue while April was the weakest at $523K. GM% improves to 41% in December — reps discount less when under year-end quota pressure. This pattern should be replicated earlier in the year.</div>
+      </div>
+      <div class="finding">
+        <span class="finding-tag tag-purple">Performance</span>
+        <div class="finding-title">All 15 reps missed revenue target</div>
+        <div class="finding-body">Company wide miss of 7% against a $9.1M target. A systemic miss across every region and rep signals a target setting methodology problem, not a sales execution problem.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section" id="recommendations">
+    <div class="section-title">Recommendations</div>
+    <div class="rec-grid">
+      <div class="rec">
+        <div class="rec-priority priority-high">High Priority</div>
+        <div class="rec-title">Implement 15% discount cap</div>
+        <div class="rec-body">Require manager approval for any discount above 15%. The 30–45% bucket had 806 orders with zero ceiling in place of a governance gap.</div>
+        <div class="rec-impact">&#8599; Recover $300K–$500K in annual margin</div>
+      </div>
+      <div class="rec">
+        <div class="rec-priority priority-high">High Priority</div>
+        <div class="rec-title">Reprice Laptop Pro 15</div>
+        <div class="rec-body">At 23% GM% on $1.8M in revenue, this is the single largest margin leak in the product portfolio. Reprice or renegotiate supplier COGS.</div>
+        <div class="rec-impact">&#8599; Potential $200K+ margin recovery</div>
+      </div>
+      <div class="rec">
+        <div class="rec-priority priority-med">Medium</div>
+        <div class="rec-title">Reset targets bottom-up</div>
+        <div class="rec-body">A 100% miss rate across all reps signals a target-setting problem, not a sales execution problem. Use rolling 3-year actuals as the baseline.</div>
+        <div class="rec-impact">&#8599; Improved rep morale and retention</div>
+      </div>
+      <div class="rec">
+        <div class="rec-priority priority-med">Medium</div>
+        <div class="rec-title">Shift mix toward Food &amp; Sports</div>
+        <div class="rec-body">Food &amp; Beverage runs 58% GM% and Sports averages 52% GM%. Growing these categories lifts overall margin without discounting reform.</div>
+        <div class="rec-impact">&#8599; +2–3pp overall GM% improvement</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div class="section">
+    <div class="section-title">Tools &amp; Methods</div>
+    <div class="method-grid">
+      <div class="method">
+        <span class="method-icon">&#128203;</span>
+        <div class="method-name">Excel Pivot Tables</div>
+        <div class="method-desc">Region, rep, product &amp; discount analysis with calculated fields</div>
+      </div>
+      <div class="method">
+        <span class="method-icon">&#129529;</span>
+        <div class="method-name">Data Cleaning</div>
+        <div class="method-desc">3,000 rows — fixed nulls, wrong signs &amp; text formatting</div>
+      </div>
+      <div class="method">
+        <span class="method-icon">&#128200;</span>
+        <div class="method-name">Trend Analysis</div>
+        <div class="method-desc">Monthly revenue &amp; margin seasonality with line charts</div>
+      </div>
+      <div class="method">
+        <span class="method-icon">&#128181;</span>
+        <div class="method-name">Discount Modeling</div>
+        <div class="method-desc">Bucket analysis quantifying margin leakage by tier</div>
+      </div>
+      <div class="method">
+        <span class="method-icon">&#127775;</span>
+        <div class="method-name">Conditional Formatting</div>
+        <div class="method-desc">Dynamic red/green performance flags vs target</div>
+      </div>
+      <div class="method">
+        <span class="method-icon">&#128101;</span>
+        <div class="method-name">Executive Dashboard</div>
+        <div class="method-desc">Single-page KPI view linked dynamically to source data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section">
+    <div class="section-title">Skills Demonstrated</div>
+    <div class="skills-grid">
+      <span class="skill-tag">Data cleaning &amp; validation</span>
+      <span class="skill-tag">Pivot table analysis</span>
+      <span class="skill-tag">Gross margin modeling</span>
+      <span class="skill-tag">Discount impact analysis</span>
+      <span class="skill-tag">Executive dashboard design</span>
+      <span class="skill-tag">Cross-functional thinking</span>
+      <span class="skill-tag">Consulting-style storytelling</span>
+      <span class="skill-tag">Conditional formatting</span>
+      <span class="skill-tag">Excel formulas &amp; DAX</span>
+      <span class="skill-tag">Pyramid Principle communication</span>
+    </div>
+  </div>
+
+  <footer>
+  <p>
+    <a href="website.html">← Back to Portfolio</a><br><br>
+
+    Sales Performance &amp; Profitability Analysis &nbsp;|&nbsp; FY 2024 &nbsp;|&nbsp; Microsoft Excel<br>
+
+    <a href="Sales-files/Sales_Performance_Analysis_master.xlsx">&#8595; Download Workbook</a>
+  </p>
+</footer>
+
+</div>
+</body>
+</html>
