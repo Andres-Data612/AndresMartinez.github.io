@@ -1,140 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emergency Department Analytics Dashboard</title>
-  <link rel="stylesheet" href="assets/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Department Analytics | Andres Martinez</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;
+  --bg2:#edeae3;
+  --ink:#1a1916;
+  --ink2:#4a4843;
+  --ink3:#7a7874;
+  --red:#c0392b;
+  --red-light:#fdf0ee;
+  --blue:#1a4fa0;
+  --blue-light:#eef2fb;
+  --green:#1a6b3c;
+  --green-light:#eef7f2;
+  --amber:#a05a00;
+  --amber-light:#fdf5e6;
+  --rule:#d4d0c8;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:99;background:var(--bg);border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:56px}
+.nav-logo{font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);text-decoration:none;transition:color 0.15s}
+.nav-links a:hover{color:var(--ink)}
+
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;padding-top:56px}
+.hero-left{background:var(--ink);color:#f7f5f0;padding:5rem 3.5rem;display:flex;flex-direction:column;justify-content:flex-end}
+.hero-right{background:var(--bg2);padding:5rem 3.5rem;display:flex;flex-direction:column;justify-content:flex-end}
+.hero-eyebrow{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;opacity:0.5;margin-bottom:2rem}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(2.8rem,5vw,4.2rem);line-height:1.05;margin-bottom:2rem}
+.hero-title em{font-style:italic;opacity:0.6}
+.hero-desc{font-size:0.9rem;line-height:1.8;opacity:0.7;max-width:400px;margin-bottom:2.5rem}
+.hero-chips{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:2.5rem}
+.chip{font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:500;padding:5px 10px;border-radius:4px;background:rgba(255,255,255,0.1);color:rgba(247,245,240,0.8)}
+.hero-right .chip{background:rgba(26,25,22,0.08);color:var(--ink2)}
+.hero-stat{margin-bottom:0.75rem}
+.hero-stat-num{font-family:'Instrument Serif',serif;font-size:3.5rem;line-height:1;color:#f7f5f0}
+.hero-stat-label{font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:0.5;margin-top:0.25rem}
+.hero-right-title{font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:2rem}
+.toc-list{list-style:none}
+.toc-list li{border-top:1px solid var(--rule);padding:1rem 0;display:flex;align-items:center;justify-content:space-between}
+.toc-list li:last-child{border-bottom:1px solid var(--rule)}
+.toc-list a{text-decoration:none;color:var(--ink);font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:1rem;width:100%;justify-content:space-between;transition:color 0.15s}
+.toc-list a:hover{color:var(--red)}
+.toc-n{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--ink3)}
+.toc-arrow{font-size:0.8rem;color:var(--ink3)}
+.hero-btns{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1.5rem}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:4px;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.15s;cursor:pointer;border:none}
+.btn-dark{background:#f7f5f0;color:var(--ink)}
+.btn-dark:hover{background:#e0ddd6}
+.btn-ghost{background:transparent;border:1px solid var(--rule);color:var(--ink2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+.page-section{max-width:1100px;margin:0 auto;padding:5rem 3rem}
+.section-rule{border:none;border-top:1px solid var(--rule);margin:0}
+.label{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:1rem}
+.section-h{font-family:'Instrument Serif',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;margin-bottom:0.5rem}
+.body-text{font-size:0.92rem;color:var(--ink2);line-height:1.85;margin-bottom:1.25rem}
+
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin:2.5rem 0}
+.metric-cell{background:var(--bg);padding:1.75rem 1.5rem}
+.metric-val{font-family:'Instrument Serif',serif;font-size:2.5rem;line-height:1;margin-bottom:0.4rem}
+.metric-val.red{color:var(--red)}
+.metric-val.blue{color:var(--blue)}
+.metric-val.green{color:var(--green)}
+.metric-val.amber{color:var(--amber)}
+.metric-name{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.4rem}
+.metric-note{font-size:0.8rem;color:var(--ink3);line-height:1.5}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem}
+.insight-block{border-top:3px solid var(--ink);padding-top:1.5rem}
+.insight-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--ink3);margin-bottom:0.75rem}
+.insight-title{font-size:1rem;font-weight:700;margin-bottom:0.6rem;line-height:1.35}
+.insight-text{font-size:0.85rem;color:var(--ink2);line-height:1.75}
+
+.findings-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:0}
+.finding-row{display:grid;grid-template-columns:60px 1fr;border-top:1px solid var(--rule);padding:1.5rem 0;gap:1.5rem;align-items:start}
+.finding-row:last-child{border-bottom:1px solid var(--rule)}
+.finding-idx{font-family:'Instrument Serif',serif;font-size:2rem;color:var(--rule);line-height:1}
+.finding-title{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem}
+.finding-text{font-size:0.83rem;color:var(--ink2);line-height:1.7}
+
+.dashboard-banner{background:var(--ink);color:#f7f5f0;border-radius:8px;padding:2.5rem 3rem;margin:2.5rem 0;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center}
+.banner-title{font-family:'Instrument Serif',serif;font-size:1.6rem;margin-bottom:0.5rem}
+.banner-text{font-size:0.85rem;opacity:0.65;line-height:1.7;max-width:560px}
+.banner-btns{display:flex;flex-direction:column;gap:0.6rem;flex-shrink:0}
+
+.rec-priority{background:var(--red-light);border:1px solid #e8c4bf;border-radius:8px;padding:2rem 2.5rem;margin-top:2.5rem;margin-bottom:1.5rem}
+.rec-priority-tag{display:inline-block;background:var(--red);color:#fff;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:3px;margin-bottom:1rem}
+.rec-priority-title{font-size:1.05rem;font-weight:700;color:var(--red);margin-bottom:0.5rem;line-height:1.35}
+.rec-priority-finding{font-size:0.8rem;color:#a05050;font-style:italic;margin-bottom:0.75rem}
+.rec-priority-text{font-size:0.88rem;color:var(--ink2);line-height:1.8}
+
+.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:1.5rem}
+.rec-cell{background:var(--bg);padding:1.5rem}
+.rec-tag{display:inline-block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue);background:var(--blue-light);padding:3px 8px;border-radius:3px;margin-bottom:0.75rem}
+.rec-title{font-size:0.88rem;font-weight:700;margin-bottom:0.4rem;line-height:1.4}
+.rec-finding{font-size:0.78rem;color:var(--ink3);font-style:italic;margin-bottom:0.5rem;line-height:1.5}
+.rec-text{font-size:0.82rem;color:var(--ink2);line-height:1.7}
+
+.conclusion-box{background:var(--green-light);border:1px solid #b8deca;border-radius:8px;padding:2rem 2.5rem;margin-top:2rem}
+.conclusion-label{font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:0.6rem}
+.conclusion-text{font-size:0.9rem;color:var(--ink2);line-height:1.85}
+
+footer{border-top:1px solid var(--rule);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--ink3)}
+footer a{color:var(--ink2);text-decoration:none}
+footer a:hover{color:var(--ink)}
+.footer-links{display:flex;gap:2rem}
+
+@media(max-width:800px){
+  .hero{grid-template-columns:1fr}
+  .hero-left,.hero-right{padding:3rem 1.5rem}
+  .metrics-row{grid-template-columns:1fr 1fr}
+  .two-col{grid-template-columns:1fr}
+  .rec-grid{grid-template-columns:1fr}
+  .dashboard-banner{grid-template-columns:1fr}
+  nav{padding:0 1.5rem}
+  .nav-links{display:none}
+  .page-section{padding:3rem 1.5rem}
+  footer{flex-direction:column;gap:1rem;text-align:center}
+}
+</style>
 </head>
 <body>
 
-  <section id="main" style="max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; text-align: left;">
-    
-    <h1>Emergency Department Analytics Dashboard</h1>
-    <p><strong>Tools:</strong> MySQL, Power BI</p>
-    <h2>Downloads</h2>
+<nav>
+  <a href="#top" class="nav-logo">Andres Martinez</a>
+  <ul class="nav-links">
+    <li><a href="#metrics">Metrics</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#insights">Insights</a></li>
+    <li><a href="#recommendations">Recommendations</a></li>
+  </ul>
+</nav>
 
-<ul>
-  <li>
-    <a href="analysis/Datacleaning_waittimes.sql" download>
-      📄 Download SQL Code
-    </a>
-  </li>
-
-  <li>
-    <a href="analysis/emergency-dashboard.pbix" download>
-      📊 Download Power BI File
-    </a>
-  </li>
-</ul>
-
-    <p>
-      This project analyzes weekly Emergency Department (A&E) performance using NHS Scotland data to evaluate
-      compliance with national wait-time targets and understand how patient volume impacts operational outcomes. 
-</p>
-      The analysis focused on identifying trends in wait-time breaches, comparing performance across treatment 
-      locations, and evaluating how attendance levels influence system pressure. Data was cleaned and transformed 
-      in MySQL before being modeled and visualized in Power BI using weighted KPIs to ensure accurate representation 
-      of patient experience.
-    </p>
-
-    <p>
-      The dashboard includes KPI tracking, drillthrough functionality, and interactive
-      visual elements designed to make complex performance trends easier to understand.
-    </p>
-
-    <p>
-      <a href="https://github.com/Andres-Data612/emergency-department-wait-times-analysis"
-         target="_blank"
-         rel="noopener noreferrer">
-        View GitHub Repository
-      </a>
-    </p>
-
-    <hr />
-
-    <h2>Dashboard Screenshots</h2>
-
-   <div class="screenshot-gallery">
-  <img src="images/Overview.png" alt="Emergency Dashboard Overview" />
-  <img src="images/Deailed.png" alt="Emergency Dashboard KPI View" />
-  <img src="images/Trends.png" alt="Emergency Dashboard Trend Analysis" />
+<div id="top" class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Data Analytics &mdash; Healthcare</p>
+    <h1 class="hero-title">Emergency<br>Department<br><em>Wait-Time</em><br>Analysis</h1>
+    <div class="hero-chips">
+      <span class="chip">MySQL</span>
+      <span class="chip">Power BI</span>
+      <span class="chip">DAX</span>
+      <span class="chip">NHS Scotland</span>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">29M+</div>
+      <div class="hero-stat-label">Patient attendances analyzed</div>
+    </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <p class="hero-right-title">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#metrics"><span>Breakdown of metrics</span><span class="toc-n">01 &rarr;</span></a></li>
+      <li><a href="#summary"><span>Executive summary</span><span class="toc-n">02 &rarr;</span></a></li>
+      <li><a href="#insights"><span>Insight deep dive</span><span class="toc-n">03 &rarr;</span></a></li>
+      <li><a href="#recommendations"><span>Recommendations</span><span class="toc-n">04 &rarr;</span></a></li>
+    </ul>
+    <p class="body-text" style="margin-top:2rem;font-size:0.85rem">An end-to-end healthcare analytics solution evaluating NHS Scotland A&amp;E compliance with national wait-time targets and identifying operational performance gaps across treatment locations.</p>
+  </div>
 </div>
 
-<style>
-  .screenshot-gallery img {
-    width: 100%;
-    max-width: 900px;
-    display: block;
-    margin: 0 0 2rem 0;
-    border-radius: 8px;
+<hr class="section-rule">
+
+<section id="metrics" class="page-section">
+  <p class="label">01 &mdash; Breakdown of metrics</p>
+  <h2 class="section-h">Key performance indicators</h2>
+  <p class="body-text">Standard simple averages misrepresent performance when high-volume sites see vastly more patients. This project used attendance-weighted KPIs built with DAX (SUM, SUMX, DIVIDE) to ensure high-volume locations appropriately influenced overall calculations, preventing misleading conclusions from unweighted averages.</p>
+
+  <div class="metrics-row">
+    <div class="metric-cell">
+      <div class="metric-name">Total attendances</div>
+      <div class="metric-val blue">29M+</div>
+      <div class="metric-note">Patient A&amp;E visits analyzed across all NHS Scotland treatment locations</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">Primary target</div>
+      <div class="metric-val red">4-Hr</div>
+      <div class="metric-note">National standard: seen, treated, and discharged or admitted within 4 hours</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">Breach thresholds</div>
+      <div class="metric-val amber">8 / 12Hr</div>
+      <div class="metric-note">Extended wait markers identifying severe operational pressure at site level</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">KPI methodology</div>
+      <div class="metric-val green" style="font-size:1.8rem">Weighted</div>
+      <div class="metric-note">Attendance-weighted metrics reflecting true patient-level performance impact</div>
+    </div>
+  </div>
+
+  <div class="metrics-row" style="margin-top:1px">
+    <div class="metric-cell">
+      <div class="metric-name">Peak year</div>
+      <div class="metric-val blue">2019</div>
+      <div class="metric-note">Highest recorded annual attendance across all NHS Scotland A&amp;E sites</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">COVID low</div>
+      <div class="metric-val red">2020</div>
+      <div class="metric-note">Sharpest attendance drop observed — 2.1M visits, down from 2.87M in 2019</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">Busiest site</div>
+      <div class="metric-val" style="color:var(--ink);font-size:1.8rem">S314h</div>
+      <div class="metric-note">2.56M total visits — highest attendance volume across all treatment locations</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-name">Unplanned share</div>
+      <div class="metric-val amber">99%</div>
+      <div class="metric-note">Nearly all A&amp;E demand is unplanned — patients arriving without a scheduled appointment due to sudden illness or injury</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<section id="summary" class="page-section">
+  <p class="label">02 &mdash; Executive summary</p>
+  <h2 class="section-h">Key takeaways</h2>
+  <p class="body-text">The analysis surfaced a clear picture of sustained operational pressure across NHS Scotland Emergency Departments. Performance was not just low, it was declining over time with limited recovery, driven primarily by rising attendance volumes and concentrated at a small number of high-impact locations. A critical finding: 99% of all A&E demand is unplanned, meaning capacity planning must account for near-total demand unpredictability.</p>
+
+  <div class="findings-list">
+    <div class="finding-row">
+      <div class="finding-idx">01</div>
+      <div>
+        <p class="finding-title">4-hour compliance declined significantly post-2020</p>
+        <p class="finding-text">Weighted compliance with the national 4-hour target dropped sharply after 2020. Recovery was limited, indicating sustained system strain rather than a temporary disruption.</p>
+      </div>
+    </div>
+    <div class="finding-row">
+      <div class="finding-idx">02</div>
+      <div>
+        <p class="finding-title">Attendance volume is the primary driver of performance</p>
+        <p class="finding-text">Higher attendance periods consistently correlated with increased wait-time breaches and lower 4-hour compliance, confirming demand pressure as the strongest predictor of operational outcomes.</p>
+      </div>
+    </div>
+    <div class="finding-row">
+      <div class="finding-idx">03</div>
+      <div>
+        <p class="finding-title">Significant variation exists between treatment locations</p>
+        <p class="finding-text">Some sites consistently outperformed others under similar demand, suggesting meaningful differences in operational efficiency, staffing, and capacity management worth studying and replicating.</p>
+      </div>
+    </div>
+    <div class="finding-row">
+      <div class="finding-idx">04</div>
+      <div>
+        <p class="finding-title">Long waits are concentrated at a small number of sites</p>
+        <p class="finding-text">8-hour and 12-hour breaches were not evenly distributed, a small number of locations contributed disproportionately to severe delays, making them key targets for focused intervention.</p>
+      </div>
+    </div>
+    <div class="finding-row">
+      <div class="finding-idx">05</div>
+      <div>
+        <p class="finding-title">Weighted KPIs fundamentally changed result interpretation</p>
+        <p class="finding-text">Using weighted metrics revealed high-volume sites had a far larger impact on overall performance than simple averages suggested. Without weighting, decision-makers would have reached materially different and misleading conclusions.</p>
+      </div>
+    </div>
+    <div class="finding-row">
+      <div class="finding-idx">06</div>
+      <div>
+        <p class="finding-title">99% of all A&amp;E demand is unplanned</p>
+        <p class="finding-text">Analysis of attendance categories confirmed that unplanned visits, patients arriving without a scheduled appointment due to sudden illness or injury, account for 99% of all A&amp;E activity. New planned visits (patients referred by a GP with a scheduled arrival time) represent less than 1% of total demand. This makes reactive surge capacity and proactive staffing the most critical operational levers available.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<section id="insights" class="page-section">
+  <p class="label">03 &mdash; Insight deep dive</p>
+  <h2 class="section-h">Dashboard &amp; analysis</h2>
+  <p class="body-text">The final solution is a six-page interactive Power BI dashboard. Page one (Overview) covers KPI tracking and historical compliance trends. Page two (Detailed Performance) delivers site-level breach analysis with rankings and a performance summary table with conditional status flags. Page three (Attendance &amp; Traffic) examines demand patterns including annual trends, location volume rankings, and planned vs. unplanned category breakdowns.</p>
+
+  <style>
+  .db-tabs{display:flex;gap:0;border:1px solid var(--rule);border-radius:8px 8px 0 0;overflow:hidden;margin-top:2rem}
+  .db-tab{flex:1;padding:0.9rem 1rem;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--bg2);color:var(--ink3);border:none;cursor:pointer;border-right:1px solid var(--rule);transition:all 0.15s;text-align:center}
+  .db-tab:last-child{border-right:none}
+  .db-tab.active{background:var(--ink);color:#f7f5f0}
+  .db-tab:hover:not(.active){background:var(--rule);color:var(--ink)}
+  .db-panel{display:none;border:1px solid var(--rule);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}
+  .db-panel.active{display:block}
+  .db-img-wrap{background:var(--bg2);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .db-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .db-img-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;padding:3rem;text-align:center;width:100%;height:100%}
+  .db-img-placeholder-icon{font-size:2.5rem;opacity:0.2}
+  .db-img-placeholder-text{font-size:0.8rem;color:var(--ink3);line-height:1.6;max-width:320px}
+  .db-panel-meta{padding:1.25rem 1.5rem;border-top:1px solid var(--rule);display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem}
+  .db-panel-desc-title{font-size:0.82rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem}
+  .db-panel-desc-text{font-size:0.78rem;color:var(--ink3);line-height:1.65;max-width:580px}
+  .db-panel-question{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.25rem}
+  .db-panel-answer{font-size:0.82rem;font-weight:700;color:var(--ink);white-space:nowrap}
+  .db-downloads{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1.5rem}
+  </style>
+
+
+  <div class="db-tabs">
+  <button class="db-tab active" onclick="switchTab(0)">
+    Page 1 — Executive Overview
+  </button>
+
+  <button class="db-tab" onclick="switchTab(1)">
+    Page 2 — Detailed Performance
+  </button>
+
+  <button class="db-tab" onclick="switchTab(2)">
+    Page 3 — Attendance &amp; Traffic
+  </button>
+</div>
+
+<div class="db-panel active" id="panel-0">
+  <div class="db-img-wrap">
+    <img
+      src="images/Overview.png"
+      alt="Executive Overview dashboard"
+    >
+  </div>
+
+  <div class="db-panel-meta">
+    <div>
+      <p class="db-panel-desc-title">Executive Overview</p>
+      <p class="db-panel-desc-text">
+        System-wide KPI tracking across 29M+ attendances. Includes weighted
+        4-hour compliance rate (81%), breach percentages, historical trend
+        line with 2020 reference annotation, and top 10 underperforming sites
+        ranked by weighted compliance.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="db-panel" id="panel-1">
+  <div class="db-img-wrap">
+    <img
+      src="images/Detailed.png"
+      alt="Detailed Performance dashboard"
+    >
+  </div>
+
+  <div class="db-panel-meta">
+    <div>
+      <p class="db-panel-desc-title">Detailed Performance</p>
+      <p class="db-panel-desc-text">
+        Site-level breach analysis filtered to the top 10 worst performers.
+        Includes 4hr/8hr/12hr grouped bar chart, monthly attendance vs.
+        compliance dual-axis chart, and a conditional status table
+        (Critical / At Risk / Monitor / Good) ranked by weighted compliance.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="db-panel" id="panel-2">
+  <div class="db-img-wrap">
+    <img
+      src="images/Trends.png"
+      alt="Attendance and Traffic dashboard"
+    >
+  </div>
+
+  <div class="db-panel-meta">
+    <div>
+      <p class="db-panel-desc-title">Attendance &amp; Traffic</p>
+      <p class="db-panel-desc-text">
+        Demand pattern analysis showing peak year (2019), COVID low (2020),
+        busiest site (S314h — 2.56M visits), and the critical finding that
+        99% of all A&amp;E demand is unplanned. Includes annual trend line,
+        location volume rankings, and planned vs. unplanned category breakdown.
+      </p>
+    </div>
+
+    <div style="flex-shrink:0; text-align:right;"></div>
+  </div>
+</div>
+
+  <script>
+  function switchTab(index) {
+    document.querySelectorAll('.db-tab').forEach((t,i) => t.classList.toggle('active', i===index));
+    document.querySelectorAll('.db-panel').forEach((p,i) => p.classList.toggle('active', i===index));
   }
-</style>
+  </script>
 
-    <hr />
+  <div class="two-col" style="margin-top:3rem">
+    <div class="insight-block">
+      <p class="insight-num">Data preparation &mdash; MySQL</p>
+      <p class="insight-title">Cleaning &amp; structuring raw A&amp;E data</p>
+      <p class="insight-text">Imported NHS Scotland data into MySQL, converted raw date fields for time-series analysis, performed null-value validation and duplicate detection, and structured the dataset for efficient downstream reporting.</p>
+    </div>
+    <div class="insight-block">
+      <p class="insight-num">KPI development &mdash; Power BI &amp; DAX</p>
+      <p class="insight-title">Attendance-weighted performance measures</p>
+      <p class="insight-text">Built weighted compliance measures using SUM, SUMX, and DIVIDE across four breach thresholds (4hr, 8hr, 12hr). This ensured high-volume sites appropriately influenced system-level calculations rather than being diluted by unweighted averaging.</p>
+    </div>
+  </div>
+</section>
 
-    <h2>Key Insight & Findings</h2>
-    <ul>
-    <h2>1. Decline in 4-Hour Target performance</h2>
-    <ul>
-      <li>Weighted compliance with the 4-hour target declined significantly over time</li>
-      <li>Sharp drop observed post-2020, indicating increased system strain</li>
-      <li>Recovery after this period was limited, suggesting sustained operational pressure</li>
-    </ul>
+<hr class="section-rule">
 
-   <h2>2. Attendance Volume Drives Performance</h2>
-<ul>
-   <li>Confirms that demand pressure is a primary driver of performance decline</li>
-  <li>
-    Higher attendance periods correlate with:
-    <ul>
-      <li>Increased wait-time breaches</li>
-      <li>Lower 4-hour compliance rates</li>
-    </ul>
-</ul>
+<section id="recommendations" class="page-section">
+  <p class="label">04 &mdash; Recommendations</p>
+  <h2 class="section-h">Operational recommendations</h2>
+  <p class="body-text">Based on analysis findings, six recommendations were developed for underperforming Emergency Department sites. The highest-priority recommendation is highlighted below, it offers the greatest potential for system-wide impact.</p>
 
-    <h2>3. Performance Varies Across Locations</h2>
-<ul>
-  <li>Significant variation exists between treatment locations</li>
-  <li>Some sites consistently outperform others, even under similar demand levels</li>
-  <li>
-    Indicates potential differences in:
-    <ul>
-      <li>Operational efficiency</li>
-      <li>Staffing</li>
-      <li>Capacity management</li>
-    </ul>
-  </li>
-</ul>
-</ul>
-     <h2>4. Long Waits Concentrated in Specific Sites</h2>
-    <ul>
-      <li>8-hour and 12-hour breaches are not evenly distributed</li>
-      <li>A small number of locations contribute disproportionately to severe delays</li>
-      <li>These sites represent key targets for operational intervention</li>
-</ul>
-       <h2>5. Weighted KPIs Reveal True Performance</h2>
-    <ul>
-      <li>Using weighted metrics changed the interpretation of results</li>
-      <li>High-volume sites had a larger impact on overall performance</li>
-      <li>Prevented misleading conclusions that would occur with simple averages</li>
-    </ul>
-       <h2>Key Takeaways</h2>
-    <ul>
-      <li>Patient volume is the strongest driver of wait-time performance</li>
-      <li>Weighted KPIs are essential for accurate healthcare analytics</li>
-      <li>System-wide performance masks significant location-level variation</li>
-      <li>Targeted interventions should focus on high-volume, low-performing sites</li>
-      <li>Post-2020 trends suggest long-term strain rather than temporary disruption</li>
+  <div class="rec-priority">
+    <span class="rec-priority-tag">Priority recommendation</span>
+    <p class="rec-priority-title">Prioritize operational reviews at high-volume, low-performing sites</p>
+    <p class="rec-priority-finding">Finding: A small number of locations accounted for a disproportionate share of 8-hour and 12-hour breaches.</p>
+    <p class="rec-priority-text">Healthcare administrators should focus operational reviews at consistently underperforming sites through workflow assessments, staffing and skill-mix reviews, and benchmarking against top performers. Targeted interventions here will generate far greater system-wide improvement than broad initiatives, because that is where the impact is most concentrated.</p>
+  </div>
 
+  <div class="rec-grid">
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Build surge capacity for unplanned demand</p>
+      <p class="rec-finding">99% of all A&amp;E visits are unplanned, the demand is almost entirely unpredictable.</p>
+      <p class="rec-text">Since scheduled visits represent less than 1% of total activity, capacity planning must prioritize surge readiness over predictable scheduling. Flexible staffing, rapid triage protocols, and real-time demand monitoring are the most critical levers available.</p>
+    </div>
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Implement capacity planning during peak demand periods</p>
+      <p class="rec-finding">High attendance volumes consistently drove increased breaches.</p>
+      <p class="rec-text">Flexible staffing during historically busy periods, additional triage resources at peak hours, and surge protocols for unexpected attendance increases, particularly at S314h and G405h, the busiest sites.</p>
+    </div>
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Adopt weighted KPIs as the standard reporting method</p>
+      <p class="rec-finding">Weighted metrics provided a more accurate picture than simple averages.</p>
+      <p class="rec-text">Attendance-weighted performance reporting should become the standard for all executive dashboards and operational reviews to ensure accurate resource allocation decisions based on actual patient impact.</p>
+    </div>
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Investigate and replicate high-performing site practices</p>
+      <p class="rec-finding">Several sites consistently achieved higher compliance under similar demand.</p>
+      <p class="rec-text">Comparative analysis between high and low performers can surface efficient triage processes and scheduling practices that can be replicated system-wide — starting with sites that consistently outperform peers at similar volumes.</p>
+    </div>
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Establish early warning monitoring for breach escalation</p>
+      <p class="rec-finding">Compliance deterioration preceded significant increases in severe breaches.</p>
+      <p class="rec-text">Monitoring thresholds that trigger alerts when attendance exceeds expected levels or 4-hour compliance begins declining — enabling early intervention before escalation into 8-hour and 12-hour breaches.</p>
+    </div>
+    <div class="rec-cell">
+      <span class="rec-tag">Recommendation</span>
+      <p class="rec-title">Invest in long-term workforce and resource planning</p>
+      <p class="rec-finding">Post-2020 compliance decline suggests structural strain, not a temporary disruption.</p>
+      <p class="rec-text">Long-term workforce recruitment, capacity expansion, process improvement initiatives, and technology investments to build resilience and support sustainable performance improvement over time.</p>
+    </div>
+  </div>
 
-    </ul>
+  <div class="conclusion-box">
+    <p class="conclusion-label">Overall conclusion</p>
+    <p class="conclusion-text">Emergency Department performance is strongly influenced by attendance volume, operational efficiency, and site-specific factors. With 99% of all demand being unplanned, reactive capacity and surge readiness are the most critical operational levers. By focusing on high-volume underperforming locations, adopting weighted performance measures, and implementing proactive staffing strategies, healthcare organizations can improve patient flow, reduce wait-time breaches, and enhance compliance with national performance targets.</p>
+  </div>
+</section>
 
-    <p>
-      <a href="index.html">← Back to Portfolio</a>
-    </p>
-
-  </section>
-
+<footer>
+  <span>Andres Martinez &mdash; Emergency Department Analytics Dashboard</span>
+  <div class="footer-links">
+<a href="index.html">← Back to Portfolio</a>
+  </div>
+</footer>
 </body>
 </html>
