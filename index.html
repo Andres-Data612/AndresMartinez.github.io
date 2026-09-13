@@ -1,581 +1,225 @@
-<!DOCTYPE HTML>
-<!--
-	Strata by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Strata by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andres Martinez — Data Analyst Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfaf8;
+    --ink:#1c1b19;
+    --ink-soft:#565248;
+    --ink-faint:#8a857b;
+    --line:#e7e3db;
+    --accent:#1c1b19;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
 
-		<!-- Header -->
-			<header id="header">
-				<div class="inner">
-					<a href="#" class="image avatar"><img src="images/thumbs/headshot.png" alt="" /></a>
-					<h1><strong> Andres Martinez       					
-					</strong>
-					<h1>Data Analyst
-					</header>
+  /* Landing — fills first screen */
+  .landing{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:40px 0;
+  }
 
-		<!-- Main -->
-			<div id="main">
+  /* Hero */
+  .hero{text-align:center;padding:0}
+  .avatar-fallback{
+    width:180px;height:180px;border-radius:50%;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-size:64px;font-weight:500;
+    margin:0 auto 30px;
+  }
+  .avatar{
+    width:180px;height:180px;border-radius:50%;object-fit:cover;
+    margin:0 auto 30px;display:block;border:1px solid var(--line);
+  }
+  .kicker{
+    font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+    letter-spacing:0.18em;color:var(--ink-faint);text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:44px;line-height:1.1;letter-spacing:-0.015em;
+    margin-top:14px;max-width:16ch;margin-left:auto;margin-right:auto;
+  }
 
-				<!-- One -->
-					<section id="one">
-						<header class="major">
-							<h2>Hi, I’m Andres Martinez <br />
-						</header>
-						<p>I’m a Data Analyst with hands-on experience turning messy data into clear, executive-ready insights—especially in healthcare and operations.
+  .intro-wrap{padding:36px 0 0;text-align:center}
+  .intro{font-size:19px;line-height:1.6;color:var(--ink-soft);max-width:60ch;margin:0 auto}
 
-I’ve worked with real-world datasets at Valley Children’s Hospital and fast-moving businesses, where I built SQL-driven analyses, automated reporting workflows, and interactive dashboards that helped leaders make better decisions—faster. </p>
-						<ul class="actions">
-					</section>
+  section{padding:20px 0 40px}
 
-				<!-- Two -->
-					<section id="two">
-						<!-- Healthcare Section -->
-<h2>Healthcare</h2>
+  /* Full-width stacked projects, thumbnail on top */
+  .proj{
+    padding:36px 0;border-top:1px solid var(--line);
+  }
+  .proj:first-of-type{border-top:none;padding-top:8px}
+  .proj .thumb{
+    width:100%;aspect-ratio:16/7;object-fit:cover;
+    border:1px solid var(--line);border-radius:10px;
+    background:#f0ede7;display:block;margin-bottom:20px;
+  }
+  .proj h3{
+    font-family:'Fraunces',serif;font-weight:500;font-size:24px;
+    line-height:1.2;letter-spacing:-0.01em;
+  }
+  .proj .tag{font-size:12px;color:var(--ink-faint);font-weight:600;margin-top:5px;display:block}
+  .proj p{font-size:16px;color:var(--ink-soft);margin-top:12px;line-height:1.6;max-width:66ch}
+  .proj .link{display:inline-block;margin-top:14px;font-size:15px;font-weight:500;color:var(--accent)}
 
-<div class="row">
+  .eyebrow{
+    font-family:'Fraunces',serif;font-size:14px;font-weight:600;
+    color:var(--ink-faint);margin-bottom:8px;
+  }
+  .sec-rule{border:none;border-top:1px solid var(--line);margin-bottom:28px}
 
-  <!-- Project 1 -->
-<article class="col-6 col-12-xsmall work-item">
+  .edu .deg{font-weight:600;font-size:17px}
+  .edu .sub{color:var(--ink-soft);font-size:15px;margin-top:2px}
 
-  <div class="project-wrapper">
-    <span class="image fit">
-      <img src="images/emergency image.jpg" alt="Emergency Department Analytics Dashboard" />
-    </span>
+  /* Closing */
+  .closing{text-align:center;padding:20px 0 8px}
+  .closing h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:34px;
+    line-height:1.15;letter-spacing:-0.015em;max-width:18ch;margin:0 auto;
+  }
+  .closing p{font-size:17px;color:var(--ink-soft);margin-top:16px;max-width:48ch;margin-left:auto;margin-right:auto}
 
-    <div class="project-overlay">
-      <a href="emergency-dashboard.html"
-         class="cta-button">
-        View Project
-      </a>
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+  .btn{
+    display:inline-block;padding:13px 26px;border-radius:8px;
+    font-size:15px;font-weight:600;text-decoration:none;
+    background:var(--accent);color:#fff;border:1px solid var(--accent);
+  }
+  .btn:hover{opacity:0.88}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .btn.ghost:hover{background:var(--accent);color:#fff;opacity:1}
+
+  .divider{width:48px;height:2px;background:var(--accent);border:none;margin:26px auto}
+
+  footer{padding:56px 0 60px;font-size:13px;color:var(--ink-faint);text-align:center}
+
+  @media (max-width:640px){
+    .landing{min-height:100vh;padding:32px 0}
+    .avatar,.avatar-fallback{width:140px;height:140px}
+    .avatar-fallback{font-size:50px}
+    .hero h1{font-size:32px}
+    .intro{font-size:17px}
+    .proj h3{font-size:21px}
+    .closing h2{font-size:27px}
+    .btns{flex-direction:column}
+    .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="landing">
+    <div class="hero">
+      <img class="avatar" src="images/thumbs/headshot.png" alt="Andres Martinez">
+      <hr class="divider">
+      <div class="kicker">Data Analyst Portfolio</div>
+      <h1>Hello, I'm Andres, and welcome to my portfolio</h1>
+    </div>
+
+    <div class="intro-wrap">
+      <p class="intro">
+        Thank you for stopping by. I have created this portfilio to showcase my project and achievements. As a data enthusiast, 
+        I'm always eager to explore new data-driven opportunities and challenges. I've always had a passion for analysing data, whether 
+        it was just because I was interested in a subject, or to help me make decisions. I'm thrilled to be able to showcase my passion and work
+      </p>
+      <hr class="divider">
     </div>
   </div>
 
-  <h3>
-    Emergency Department Analytics Dashboard (SQL, Power BI)
-  </h3>
-
-  <p>
-    Designed and implemented an end-to-end Emergency Department analytics project
-    using MySQL for data cleaning and Power BI for interactive visualization.
-  </p>
-
-</article>
-
-  <!-- Project 2 -->
-  <article class="col-6 col-12-xsmall work-item">
-
-    <div class="project-wrapper">
-      <span class="image fit">
-        <img src="images/Healthcare-fraud.jpg" alt="Medicare Fraud Detection System" />
-      </span>
-
-      <div class="project-overlay">
-        <a href="medicare_fraud_portfolio.html"
-           class="cta-button">
-          View Project
-        </a>
-      </div>
+  <section>
+    <div class="proj">
+      <img class="thumb" src="images/emergency image.jpg" alt="Emergency Department Analytics Dashboard">
+      <h3>Emergency Department Analytics Dashboard</h3>
+      <span class="tag">SQL · Power BI</span>
+      <p>Designed and implemented an end-to-end Emergency Department analytics project
+      using MySQL for data cleaning and Power BI for interactive visualization.</p>
+      <a class="link" href="emergency-dashboard.html" 
+      style="display:inline-block;margin-top:16px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+      text-decoration:none;background:#1c1b19;color:#fff;padding:11px 22px;border-radius:8px;">Learn more</a>
     </div>
 
-	 <h3>Medicare Fraud Detection System (SQL, Power BI):</h3>
-    <p> Built an end-to-end provider-level anomaly detection system using MySQL and Power BI, applying Z-score statistical analysis across 13.6M+ CMS Medicare records to identify 130 high-risk providers out of 691K+ analyzed across $36B in payments.</h3>
-    </p>
+    <div class="proj">
+      <img class="thumb" src="images/Healthcare-fraud.jpg" alt="Medicare Fraud Detection System">
+      <h3>Medicare Fraud Detection System</h3>
+      <span class="tag">SQL · Power BI</span>
+      <p>Built an end-to-end provider-level anomaly detection system using MySQL and
+      Power BI, applying Z-score statistical analysis across 13.6M+ CMS Medicare records
+      to identify 130 high-risk providers out of 691K+ analyzed across $36B in payments.</p>
+      <a class="link" href="medicare_fraud_portfolio.html" 
+      style="display:inline-block;margin-top:16px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+      text-decoration:none;background:#1c1b19;color:#fff;padding:11px 22px;border-radius:8px;">Learn more</a>
+    </div>
 
-  </article>
+    <div class="proj">
+      <img class="thumb" src="images/CustomerChurn-thumb.png" alt="Customer Churn & Revenue Risk Analysis">
+      <h3>Customer Churn &amp; Revenue Risk Analysis</h3>
+      <span class="tag">MySQL · Excel · Power BI</span>
+      <p>Analysed 41,188 real bank customers to identify churn patterns across 6
+      dimensions — uncovering that campaign fatigue, seasonal timing and contact method
+      drive the majority of churn. Delivered a 3-page executive dashboard with actionable
+      retention recommendations.</p>
+     <a class="link" href="UCI-Churn.html" 
+      style="display:inline-block;margin-top:16px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+      text-decoration:none;background:#1c1b19;color:#fff;padding:11px 22px;border-radius:8px;">Learn more</a>
+    </div>
 
+    <div class="proj">
+      <img class="thumb" src="images/Sale_image.png" alt="Sales Performance & Profitability Analysis">
+      <h3>Sales Performance &amp; Profitability Analysis</h3>
+      <span class="tag">Excel</span>
+      <p>Analysed 3,000 transactions across 5 regions, 15 sales reps, and 25 products,
+      uncovering $798K in margin leakage driven by unmanaged field discounting. Delivered
+      an executive dashboard with pivot analysis and actionable pricing recommendations.</p>
+      <a class="link" href="Sale_Performance_index.html" 
+      style="display:inline-block;margin-top:16px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+      text-decoration:none;background:#1c1b19;color:#fff;padding:11px 22px;border-radius:8px;">Learn more</a>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <div class="eyebrow">Education</div>
+    <hr class="sec-rule">
+    <div class="edu">
+      <div class="deg">B.S. in Business Administration — Data Analytics (2025)</div>
+      <div class="sub">California State University, Fresno</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="closing">
+    <h2>I hope you found this insightful.</h2>
+    <p>See below to reach out or view my resume. Thank you for visiting.</p>
+    <div class="btns">
+      <a class="btn" href="mailto:Andres.mm612@gmail.com">Email me</a>
+      <a class="btn ghost" href="#">Resume</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/andresmartinezmares/">LinkedIn</a>
+    </div>
+  </div>
 </div>
 
-						<h2>Business</h2>
+<footer>© 2026 Andres Martinez</footer>
 
-<div class="row">
-
-  <!-- Project 1 -->
-  <article class="col-6 col-12-xsmall work-item">
-
-    <div class="project-wrapper">
-      <span class="image fit">
-        <img src="images/CustomerChurn-thumb.png" alt="Customer Churn & Revenue Risk Analysis" />
-      </span>
-
-      <div class="project-overlay">
-        <a href="UCI-Churn.html"
-           class="cta-button">
-          View Project
-        </a>
-      </div>
-    </div>
-
-    <h3>Customer Churn & Revenue Risk Analysis</h3>
-    <p>Analysed 41,188 real bank customers using MySQL, Excel and Power BI to identify churn patterns across 6 dimensions — uncovering that campaign fatigue, seasonal timing and contact method drive the majority of churn. Delivered a 3-page executive dashboard with actionable retention recommendations.</p>
-
-  </article>
-
-   <!-- Project 2 -->
-  <article class="col-6 col-12-xsmall work-item">
-
-    <div class="project-wrapper">
-      <span class="image fit">
-        <img src="images/Sale_image.png" alt="Sales Performance & Profitability Analysis" />
-      </span>
-
-      <div class="project-overlay">
-        <a href="Sale_Performance_index.html"
-           class="cta-button">
-          View Project
-        </a>
-      </div>
-    </div>
-
-    <h3>Sales Performance & Profitability Analysis</h3>
-    <p>Analysed 3,000 transactions across 5 regions, 15 sales reps, and 25 products using Excel uncovering $798K in margin leakage driven by unmanaged field discounting. Delivered an executive dashboard with pivot analysis and actionable pricing recommendations.</p>
-
-  </article>
-
-</div>
-
-						<h2>Tech</h2>
-						<div class="row">
-
-  <!-- Project 1 -->
-  <article class="col-6 col-12-xsmall work-item">
-
-    <div class="project-wrapper">
-      <span class="image fit">
-        <img src="images/underconstruction image.jpg" alt="Work in Progress" />
-      </span>
-
-      <div class="project-overlay">
-        <a href="#"
-           class="cta-button">
-          Coming Soon
-        </a>
-      </div>
-    </div>
-
-    <h3>Work in Progress</h3>
-    <p>...</p>
-
-  </article>
-
-  <!-- Project 2 -->
-  <article class="col-6 col-12-xsmall work-item">
-
-    <div class="project-wrapper">
-      <span class="image fit">
-        <img src="images/underconstruction image.jpg" alt="Work in Progress" />
-      </span>
-
-      <div class="project-overlay">
-        <a href="#"
-           class="cta-button">
-          Coming Soon
-        </a>
-      </div>
-    </div>
-
-    <h3>Work in Progress</h3>
-    <p>...</p>
-
-  </article>
-
-</div>
-
-				<!-- Three -->
-				 <section id="skills-education">
-  <h2>Skills</h2>
-  <ul>
-    <li><strong>Languages & Tools:</strong> SQL, Python, R, Excel (Advanced Formulas & Macros), Power BI, Tableau, Alteryx, JMP, GIS</li>
-    <li><strong>Data Analytics:</strong> Data extraction, cleaning, transformation, validation, and manipulation</li>
-    <li><strong>Technical:</strong> SQL queries (joins, aggregations, subqueries), KPI development, regression analysis, dashboard design</li>
-    <li><strong>Visualization & Reporting:</strong> Interactive dashboards, drill-through reporting, executive-ready presentations</li>
-    <li><strong>Automation:</strong> Workflow automation, scripting, and process optimization</li>
-    <li><strong>Database & Data Management:</strong> Structured data handling, data integrity validation, large dataset analysis</li>
-  </ul>
-
-  <h2>Education</h2>
-  <p>
-    <strong>Bachelor of Science in Business Administration – Data Analytics (2025)</strong><br>
-    California State University, Fresno
-	 <h2>Certificate</h2>
-  <p>
-    <strong>Work in progess</strong><br>
-  </p>
-</section>
-
-						<div class="row">
-					<section id="three">
-								</form>
-								</ul>
-							</div>
-							<div class="col-4 col-12-small">
-								<ul class="labeled-icons">
-									<h2>Location</h2>
-									<li> 
-										<h3 class="icon solid fa-home"><span class="label">Address</span></h3>
-										Chowchilla, CA<br />
-										United States
-									</li>
-									<li>
-									</li>
-									<h2>Email</h2>
-									<li>
-										<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
-										<a href="#">Andres.mm612@gmail.com</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</section>
-
-				<!-- Four -->
-				<!--
-					<section id="four">
-						<h2>Elements</h2>
-
-						<section>
-							<h4>Text</h4>
-							<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
-							This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
-							This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
-							<hr />
-							<header>
-								<h4>Heading with a Subtitle</h4>
-								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-							</header>
-							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-							<header>
-								<h5>Heading with a Subtitle</h5>
-								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-							</header>
-							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-							<hr />
-							<h2>Heading Level 2</h2>
-							<h3>Heading Level 3</h3>
-							<h4>Heading Level 4</h4>
-							<h5>Heading Level 5</h5>
-							<h6>Heading Level 6</h6>
-							<hr />
-							<h5>Blockquote</h5>
-							<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
-							<h5>Preformatted</h5>
-							<pre><code>i = 0;
-
-while (!deck.isInOrder()) {
-print 'Iteration ' + i;
-deck.shuffle();
-i++;
-}
-
-print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
-						</section>
-
-						<section>
-							<h4>Lists</h4>
-							<div class="row">
-								<div class="col-6 col-12-xsmall">
-									<h5>Unordered</h5>
-									<ul>
-										<li>Dolor pulvinar etiam magna etiam.</li>
-										<li>Sagittis adipiscing lorem eleifend.</li>
-										<li>Felis enim feugiat dolore viverra.</li>
-									</ul>
-									<h5>Alternate</h5>
-									<ul class="alt">
-										<li>Dolor pulvinar etiam magna etiam.</li>
-										<li>Sagittis adipiscing lorem eleifend.</li>
-										<li>Felis enim feugiat dolore viverra.</li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-xsmall">
-									<h5>Ordered</h5>
-									<ol>
-										<li>Dolor pulvinar etiam magna etiam.</li>
-										<li>Etiam vel felis at lorem sed viverra.</li>
-										<li>Felis enim feugiat dolore viverra.</li>
-										<li>Dolor pulvinar etiam magna etiam.</li>
-										<li>Etiam vel felis at lorem sed viverra.</li>
-										<li>Felis enim feugiat dolore viverra.</li>
-									</ol>
-									<h5>Icons</h5>
-									<ul class="icons">
-										<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-										<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-										<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-										<li><a href="#" class="icon brands fa-tumblr"><span class="label">Tumblr</span></a></li>
-									</ul>
-								</div>
-							</div>
-							<h5>Actions</h5>
-							<ul class="actions">
-								<li><a href="#" class="button primary">Default</a></li>
-								<li><a href="#" class="button">Default</a></li>
-							</ul>
-							<ul class="actions small">
-								<li><a href="#" class="button primary small">Small</a></li>
-								<li><a href="#" class="button small">Small</a></li>
-							</ul>
-							<div class="row">
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary">Default</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary small">Small</a></li>
-										<li><a href="#" class="button small">Small</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary fit">Default</a></li>
-										<li><a href="#" class="button fit">Default</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary small fit">Small</a></li>
-										<li><a href="#" class="button small fit">Small</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-
-						<section>
-							<h4>Table</h4>
-							<h5>Default</h5>
-							<div class="table-wrapper">
-								<table>
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th>Description</th>
-											<th>Price</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Item One</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Two</td>
-											<td>Vis ac commodo adipiscing arcu aliquet.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Three</td>
-											<td> Morbi faucibus arcu accumsan lorem.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Four</td>
-											<td>Vitae integer tempus condimentum.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Five</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan="2"></td>
-											<td>100.00</td>
-										</tr>
-									</tfoot>
-								</table>
-							</div>
-
-							<h5>Alternate</h5>
-							<div class="table-wrapper">
-								<table class="alt">
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th>Description</th>
-											<th>Price</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Item One</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Two</td>
-											<td>Vis ac commodo adipiscing arcu aliquet.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Three</td>
-											<td> Morbi faucibus arcu accumsan lorem.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Four</td>
-											<td>Vitae integer tempus condimentum.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Five</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan="2"></td>
-											<td>100.00</td>
-										</tr>
-									</tfoot>
-								</table>
-							</div>
-						</section>
-
-						<section>
-							<h4>Buttons</h4>
-							<ul class="actions">
-								<li><a href="#" class="button primary">Primary</a></li>
-								<li><a href="#" class="button">Default</a></li>
-							</ul>
-							<ul class="actions">
-								<li><a href="#" class="button large">Large</a></li>
-								<li><a href="#" class="button">Default</a></li>
-								<li><a href="#" class="button small">Small</a></li>
-							</ul>
-							<ul class="actions fit">
-								<li><a href="#" class="button primary fit">Fit</a></li>
-								<li><a href="#" class="button fit">Fit</a></li>
-							</ul>
-							<ul class="actions fit small">
-								<li><a href="#" class="button primary fit small">Fit + Small</a></li>
-								<li><a href="#" class="button fit small">Fit + Small</a></li>
-							</ul>
-							<ul class="actions">
-								<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
-								<li><a href="#" class="button icon solid fa-download">Icon</a></li>
-							</ul>
-							<ul class="actions">
-								<li><span class="button primary disabled">Primary</span></li>
-								<li><span class="button disabled">Default</span></li>
-							</ul>
-						</section>
-
-						<section>
-							<h4>Form</h4>
-							<form method="post" action="#">
-								<div class="row gtr-uniform gtr-50">
-									<div class="col-6 col-12-xsmall">
-										<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
-									</div>
-									<div class="col-6 col-12-xsmall">
-										<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
-									</div>
-									<div class="col-12">
-										<select name="demo-category" id="demo-category">
-											<option value="">- Category -</option>
-											<option value="1">Manufacturing</option>
-											<option value="1">Shipping</option>
-											<option value="1">Administration</option>
-											<option value="1">Human Resources</option>
-										</select>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-low" name="demo-priority" checked>
-										<label for="demo-priority-low">Low Priority</label>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-normal" name="demo-priority">
-										<label for="demo-priority-normal">Normal Priority</label>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-high" name="demo-priority">
-										<label for="demo-priority-high">High Priority</label>
-									</div>
-									<div class="col-6 col-12-small">
-										<input type="checkbox" id="demo-copy" name="demo-copy">
-										<label for="demo-copy">Email me a copy of this message</label>
-									</div>
-									<div class="col-6 col-12-small">
-										<input type="checkbox" id="demo-human" name="demo-human" checked>
-										<label for="demo-human">I am a human and not a robot</label>
-									</div>
-									<div class="col-12">
-										<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
-									</div>
-									<div class="col-12">
-										<ul class="actions">
-											<li><input type="submit" value="Send Message" class="primary" /></li>
-											<li><input type="reset" value="Reset" /></li>
-										</ul>
-									</div>
-								</div>
-							</form>
-						</section>
-
-						<section>
-							<h4>Image</h4>
-							<h5>Fit</h5>
-							<div class="box alt">
-								<div class="row gtr-50 gtr-uniform">
-									<div class="col-12"><span class="image fit"><img src="images/fulls/05.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/05.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/06.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
-								</div>
-							</div>
-							<h5>Left &amp; Right</h5>
-							<p><span class="image left"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-							<p><span class="image right"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-						</section>
-
-					</section>
-				-->
-
-			</div>
-
-		<!-- Footer -->
-			<footer id="footer">
-				<div class="inner">
-					<ul class="icons">
-						<li><a href="https://github.com/Andres-Data612" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="https://www.linkedin.com/in/andresmartinezmares/" class="icon brands fa-linkedin"><span class="label">linkedin</span></a></li>
-					</ul>
-					<ul class="copyright">
-						<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</div>
-			</footer>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.poptrox.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+</body>
 </html>
