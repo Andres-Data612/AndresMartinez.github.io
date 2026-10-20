@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iowa Liquor Sales Analysis | Andres Martinez</title>
+<meta name="description" content="Forecasting, plan variance, and price-volume-mix analysis of Iowa liquor sales, 2021 to 2025. Built in Excel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Colors (edit here) - matched to the Excel dashboard ---------- */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --bg-alt: #f2f5fa;
+  --text: #1f2937;
+  --text-2: #374151;
+  --muted: #6b7280;
+  --border: #d9dee7;
+  --accent: #2f5597;      /* dark dashboard blue (text-safe) */
+  --accent-bg: #dae3f3;   /* light dashboard blue */
+  --brand: #4472c4;       /* dashboard blue */
+  --down: #c00000;        /* dashboard red arrows */
+  --up: #2e7d32;
+  --head-bg: #4472c4;
+  --head-text: #ffffff;
+  --head-muted: #ffffff;
+  --head-border: #2f5597;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1724; --bg-alt: #162133; --text: #e8edf4; --text-2: #c9d2de; --muted: #93a0b3;
+    --border: #26344b; --accent: #8fb0e8; --accent-bg: #1c2f52; --brand: #4472c4; --down: #ff6b6b; --up: #6fcf7a;
+    --head-bg: #2f5597; --head-text: #ffffff; --head-muted: #c9d8f0; --head-border: #24467f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1724; --bg-alt: #162133; --text: #e8edf4; --text-2: #c9d2de; --muted: #93a0b3;
+  --border: #26344b; --accent: #8fb0e8; --accent-bg: #1c2f52; --brand: #4472c4; --down: #ff6b6b; --up: #6fcf7a;
+  --head-bg: #2f5597; --head-text: #ffffff; --head-muted: #c9d8f0; --head-border: #24467f;
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--text-2);
+  font: 400 16px/1.65 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3 { margin: 0; color: var(--text); font-weight: 600; }
+h2 { font-size: 26px; line-height: 1.25; margin-bottom: 18px; letter-spacing: -.2px; }
+h3 { font-size: 16px; margin: 0 0 10px; }
+p { margin: 0 0 16px; max-width: 95ch; }
+strong { color: var(--text); font-weight: 600; }
+.mono, td.n, th.n { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Header band ---------- */
+.band { background: var(--head-bg); color: var(--head-text); border-bottom: 4px solid var(--head-border); }
+.band a { color: var(--head-text); }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--head-bg); border-bottom: 1px solid var(--head-border); }
+.topbar a { color: var(--head-text); }
+.bar { display: flex; justify-content: space-between; align-items: center; height: 60px; gap: 16px; }
+.bar .name { font-weight: 600; text-decoration: none; }
+.bar nav { display: flex; gap: 22px; font-size: 14px; }
+.bar nav a { color: var(--head-muted); text-decoration: none; }
+.bar nav a:hover { color: var(--head-text); }
+.title { padding: 56px 0 44px; }
+.label { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .8px; text-transform: uppercase; }
+.title .label { color: var(--head-muted); }
+.title h1 { color: var(--head-text); font-size: clamp(34px, 5vw, 48px); line-height: 1.1; letter-spacing: -.8px; margin-top: 14px; }
+.title p { color: var(--head-text); font-size: 18px; margin-top: 16px; max-width: 80ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin-top: 24px; font-size: 14px; color: var(--head-muted); }
+.facts b { color: var(--head-text); font-weight: 500; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--head-border); }
+.stat { padding: 22px 20px 28px 0; }
+.stat + .stat { padding-left: 20px; border-left: 1px solid var(--head-border); }
+.stat .v { font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; color: var(--head-text); }
+.stat .k { font-size: 13px; color: var(--head-muted); margin-top: 2px; }
+
+/* ---------- Layout: content left, contents right ---------- */
+.layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 56px; align-items: start; }
+main { min-width: 0; }
+.toc { position: sticky; top: 60px; padding-top: 56px; min-width: 0; }
+.toc .label { color: var(--muted); margin-bottom: 12px; }
+.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.toc li { counter-increment: s; }
+.toc a {
+  display: flex; gap: 10px; padding: 7px 0; color: var(--text-2); font-size: 14px; text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+.toc a::before { content: counter(s, decimal-leading-zero); font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); padding-top: 2px; }
+.toc a:hover { color: var(--text); }
+.toc a.active { color: var(--accent); font-weight: 500; }
+.toc a.active::before { color: var(--accent); }
+
+section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+section:last-child { border-bottom: 0; }
+section > .label { color: var(--accent); margin-bottom: 8px; display: block; }
+
+ul.list { margin: 0 0 16px; padding-left: 20px; max-width: 95ch; }
+ul.list li { margin-bottom: 8px; }
+
+/* Findings grid */
+.findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--border); margin-top: 24px; }
+.finding { padding: 20px 20px 20px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: baseline; }
+.finding:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--border); }
+.finding .fig { white-space: nowrap; font-family: "IBM Plex Mono", monospace; font-size: 22px; font-weight: 500; color: var(--accent); }
+.finding p { margin: 0; font-size: 15px; }
+
+/* Tables */
+.tbl { overflow-x: auto; margin: 4px 0 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--border); vertical-align: baseline; }
+th { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 500; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); white-space: nowrap; border-bottom: 2px solid var(--brand); }
+td { white-space: nowrap; }
+td.tw { white-space: normal; }
+td.n, th.n { text-align: right; padding-right: 8px; padding-left: 12px; }
+td.neg, .fig.neg { color: var(--down); }
+td.pos { color: var(--up); }
+#plan th:last-child, #plan td:last-child { padding-left: 24px; }
+tr.tot td { color: var(--text); font-weight: 600; border-top: 2px solid var(--border); }
+.issues { display: grid; gap: 0; border-top: 1px solid var(--border); margin-top: 8px; }
+.issue { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border); }
+.issue h3 { margin: 0; font-size: 15px; }
+.issue p { margin: 0 0 6px; font-size: 15px; }
+.issue p:last-child { margin: 0; }
+.issue .fix { color: var(--text); }
+.issue .fix b { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .6px; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-right: 6px; }
+.tag { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .4px; color: var(--down); }
+tr.hl td { color: var(--text); font-weight: 600; background: var(--accent-bg); }
+tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--brand); padding-left: 10px; }
+.note { font-size: 14px; color: var(--muted); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.two > * { min-width: 0; }
+.panel { background: var(--bg-alt); border: 1px solid var(--border); border-top: 3px solid var(--brand); padding: 20px 22px; }
+.panel ul { margin: 0; padding-left: 18px; }
+.panel li { margin-bottom: 6px; font-size: 15px; }
+
+/* Screenshot */
+figure { margin: 32px 0 0; }
+figure .frame { display: block; border: 1px solid var(--border); background: var(--bg-alt); cursor: zoom-in; }
+figure img { display: block; width: 100%; height: auto; }
+figure .ph { padding: 56px 20px; text-align: center; color: var(--muted); font-size: 14px; font-family: "IBM Plex Mono", monospace; }
+figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+footer { background: var(--head-bg); border-top: 4px solid var(--head-border); color: var(--head-muted); font-size: 13px; padding: 28px 0; }
+footer a { color: var(--head-text); text-decoration: none; font-weight: 500; }
+footer a:hover { text-decoration: underline; }
+footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; gap: 0; }
+  .toc { order: -1; padding: 0; margin: 0 -24px; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 5; }
+  .toc .label { display: none; }
+  .toc ol { display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 24px; gap: 18px; }
+  .toc a { border-bottom: 2px solid transparent; padding: 12px 0; white-space: nowrap; }
+  .toc a.active { border-bottom-color: var(--accent); }
+  html { scroll-padding-top: 116px; }
+}
+@media (max-width: 760px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(3) { padding-left: 0; border-left: 0; }
+  .stat:nth-child(n+3) { border-top: 1px solid var(--head-border); }
+  .two, .findings { grid-template-columns: 1fr; gap: 0; }
+  .finding:nth-child(even) { padding-left: 0; border-left: 0; }
+  .issue { grid-template-columns: 1fr; gap: 6px; }
+  .two > * + * { margin-top: 32px; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 16px; }
+  .toc { margin: 0 -16px; }
+  .toc ol { padding: 0 16px; }
+  .stat .v { font-size: 22px; }
+  .finding { grid-template-columns: 80px 1fr; }
+  .finding .fig { font-size: 18px; }
+  .bar nav a.hide-sm { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="bar">
+      <a class="name" href="index.html">Andres Martinez</a>
+      <nav><a href="index.html">← Back to portfolio</a></nav>
+    </div>
+  </div>
+</div>
+
+<header class="band">
+  <div class="wrap">
+    <div class="title">
+      <div class="label">Case study · Excel</div>
+      <h1>Iowa Liquor Sales Analysis</h1>
+      <p>Sales fell 5% in 2025. I used five years of state sales data to find out why, test three ways of forecasting monthly sales, and estimate 2026 revenue.</p>
+      <div class="facts">
+        <span>Tools <b>Excel, Power Query, Scenario Manager, Python (file conversion)</b></span>
+        <span>Data <b>Iowa Open Data Portal</b></span>
+        <span>Period <b>2021–2025</b></span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v">$424.8M</div><div class="k">2025 sales, −5.0%</div></div>
+      <div class="stat"><div class="v">−$22.4M</div><div class="k">Change vs. 2024</div></div>
+      <div class="stat"><div class="v">6.0%</div><div class="k">Best forecast error</div></div>
+      <div class="stat"><div class="v">$403.8M</div><div class="k">2026 base case</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside class="toc" aria-label="Contents">
+    <div class="label">Contents</div>
+    <ol>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#data">Data issues</a></li>
+      <li><a href="#metrics">Metrics</a></li>
+      <li><a href="#summary">Executive summary</a></li>
+      <li><a href="#why">Why sales fell</a></li>
+      <li><a href="#plan">Plan vs. actual</a></li>
+      <li><a href="#forecast">2026 outlook</a></li>
+      <li><a href="#recs">Recommendations</a></li>
+      <li><a href="#limits">Limitations</a></li>
+    </ol>
+  </aside>
+  <main>
+    <section id="background">
+      <span class="label">01 · Background</span>
+      <h2>The question</h2>
+      <div class="two">
+        <div>
+          <p>Iowa controls wholesale liquor distribution and publishes every sale to licensed retailers as open data. That gives a full transaction record across several years, which is rare for public sales data.</p>
+          <p>I set out to answer three questions: how accurately can monthly sales be forecast, what caused the 2025 decline, and what should 2026 revenue look like?</p>
+          <!-- TODO: add link to the dataset -->
+        </div>
+        <div class="panel">
+          <h3>Data preparation</h3>
+          <ul>
+            <li>Converted the yearly JSON downloads to CSV with Python</li>
+            <li>Loaded about 3M raw rows per year in Power Query</li>
+            <li>Removed duplicate rows</li>
+            <li>Grouped 50 category names into 8 groups</li>
+            <li>Summarized to category by month</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="data">
+      <span class="label">02 · Data issues</span>
+      <h2>What I had to fix before analyzing</h2>
+      <p>The raw files had problems that would have changed the results if left alone. Each one was found by checking row counts and totals, not by looking at charts.</p>
+      <div class="issues">
+        <div class="issue">
+          <h3>Empty full-year exports</h3>
+          <div>
+            <p>The CSV download came back empty for the larger years.</p>
+            <p class="fix"><b>Fix</b>Downloaded the JSON version in parts and converted it to CSV with a short Python script.</p>
+          </div>
+        </div>
+        <div class="issue">
+          <h3>Duplicate rows</h3>
+          <div>
+            <p>16–20% of rows were exact copies spread across the download files.</p>
+            <p class="fix"><b>Fix</b>Removed the file-name column so copies matched, then removed duplicates across all columns.</p>
+          </div>
+        </div>
+        <div class="issue">
+          <h3>Invoice ID changed meaning</h3>
+          <div>
+            <p>Starting September 2025, one invoice ID covered a whole order instead of a single line. Removing duplicates by invoice ID alone deleted about 90% of September–December sales.</p>
+            <p class="fix"><b>Fix</b>Removed duplicates on every column instead of invoice ID.</p>
+          </div>
+        </div>
+        <div class="issue">
+          <h3>Commas inside fields</h3>
+          <div>
+            <p>Store names and addresses with commas pushed values into the wrong columns, so a city name ("ANKENY") ended up in a number column and broke the load.</p>
+            <p class="fix"><b>Fix</b>Switched Power Query to quote-aware CSV parsing.</p>
+          </div>
+        </div>
+        <div class="issue">
+          <h3>Reconciliation</h3>
+          <div>
+            <p class="fix"><b>Check</b>Compared yearly row counts and totals after cleaning. The 2025 total matched to the dollar: $424,814,286.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="metrics">
+      <span class="label">03 · Metrics</span>
+      <h2>How I measured it</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Metric</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sales</strong></td><td class="tw">Total dollars sold to retailers</td></tr>
+            <tr><td><strong>Bottles</strong></td><td class="tw">Total bottles sold</td></tr>
+            <tr><td><strong>Average price</strong></td><td class="tw">Sales divided by bottles</td></tr>
+            <tr><td><strong>MAPE</strong></td><td class="tw">Average percent error between a forecast and actual sales. Lower is better.</td></tr>
+            <tr><td><strong>Plan variance</strong></td><td class="tw">Actual minus plan. Months off by more than 5% are flagged.</td></tr>
+            <tr><td><strong>Price, volume, mix</strong></td><td class="tw">Splits the yearly change into price per bottle, number of bottles, and shifts between categories.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="summary">
+      <span class="label">04 · Executive summary</span>
+      <h2>Fewer bottles sold drove most of the decline</h2>
+      <p>2025 sales were $424.8M, down $22.4M from 2024. About 60% of the drop came from selling fewer bottles and 39% from a lower average price. The mix between categories barely changed.</p>
+      <div class="findings">
+        <div class="finding"><div class="fig">60%</div><p>of the decline came from lower volume. Bottles sold fell from 31.4M to 30.4M.</p></div>
+        <div class="finding"><div class="fig neg">−14.2%</div><p>for Brandy, the steepest drop. Every category declined; Liqueurs were nearly flat.</p></div>
+        <div class="finding"><div class="fig">10 of 12</div><p>months ran below plan. November was the worst at −13.5%.</p></div>
+        <div class="finding"><div class="fig">60%</div><p>of 2025 sales came from Whiskey and Vodka combined.</p></div>
+      </div>
+      <figure>
+        <a class="frame" href="images/iowa-dashboard.png" target="_blank" rel="noopener" title="Open full size">
+          <img src="images/iowa-dashboard.png" alt="Excel dashboard summarizing Iowa liquor sales for 2025">
+        </a>
+        <figcaption>Excel dashboard: sales bridge, category totals, plan vs actual, and category sensitivity. <a href="images/iowa-dashboard.png" target="_blank" rel="noopener">Open full size ↗</a></figcaption>
+      </figure>
+    </section>
+
+    <section id="why">
+      <span class="label">05 · Insight deep dive</span>
+      <h2>Why sales fell</h2>
+      <h3>Price, volume, mix bridge (2024 to 2025)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Driver</th><th class="n">2024</th><th class="n">2025</th><th class="n">Change</th><th class="n">Sales effect</th><th class="n">Share</th></tr></thead>
+          <tbody>
+            <tr><td>Bottles sold (volume)</td><td class="n">31.39M</td><td class="n">30.44M</td><td class="n neg">−3.0%</td><td class="n neg">−$13.53M</td><td class="n">60%</td></tr>
+            <tr><td>Avg price per bottle</td><td class="n">$14.25</td><td class="n">$13.96</td><td class="n neg">−2.0%</td><td class="n neg">−$8.82M</td><td class="n">39%</td></tr>
+            <tr><td>Category mix</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n neg">−$0.07M</td><td class="n">&lt;1%</td></tr>
+            <tr class="tot"><td>Total sales</td><td class="n">$447.24M</td><td class="n">$424.81M</td><td class="n neg">−5.0%</td><td class="n neg">−$22.42M</td><td class="n">100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:36px">Sales by category</h3>
+      <div class="tbl">
+        <!-- TODO: confirm 2025 sales against PVM sheet column C -->
+        <table>
+          <thead><tr><th>Category</th><th class="n">2025 sales</th><th class="n">Change vs. 2024</th></tr></thead>
+          <tbody>
+            <tr><td>Whiskey</td><td class="n">$162.8M</td><td class="n neg">−4.7%</td></tr>
+            <tr><td>Vodka</td><td class="n">$91.2M</td><td class="n neg">−3.6%</td></tr>
+            <tr><td>Tequila/Mezcal</td><td class="n">$44.2M</td><td class="n neg">−4.3%</td></tr>
+            <tr><td>Liqueurs</td><td class="n">$39.6M</td><td class="n neg">−0.7%</td></tr>
+            <tr><td>Rum</td><td class="n">$33.8M</td><td class="n neg">−8.0%</td></tr>
+            <tr><td>Other</td><td class="n">$31.8M</td><td class="n neg">−9.2%</td></tr>
+            <tr><td>Brandy</td><td class="n">$12.2M</td><td class="n neg">−14.2%</td></tr>
+            <tr><td>Gin</td><td class="n">$9.0M</td><td class="n neg">−6.0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Whiskey lost the most dollars (−$8.05M). Brandy fell the fastest.</p>
+    </section>
+
+    <section id="plan">
+      <span class="label">06 · Plan vs. actual</span>
+      <h2>2025 ran below plan in 10 of 12 months</h2>
+      <p>The plan for each month is the same month in 2024 (seasonal naive), the most accurate forecast in testing. Only September and December beat plan.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Month</th><th class="n">Plan</th><th class="n">Actual</th><th class="n">Variance</th><th class="n">%</th><th>Flag</th></tr></thead>
+          <tbody>
+            <tr><td>Jan</td><td class="n">$32.97M</td><td class="n">$31.11M</td><td class="n neg">−$1.86M</td><td class="n neg">−5.6%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr><td>Feb</td><td class="n">$35.10M</td><td class="n">$31.31M</td><td class="n neg">−$3.79M</td><td class="n neg">−10.8%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr><td>Mar</td><td class="n">$34.16M</td><td class="n">$33.52M</td><td class="n neg">−$0.65M</td><td class="n neg">−1.9%</td><td></td></tr>
+            <tr><td>Apr</td><td class="n">$36.39M</td><td class="n">$35.50M</td><td class="n neg">−$0.89M</td><td class="n neg">−2.4%</td><td></td></tr>
+            <tr><td>May</td><td class="n">$39.36M</td><td class="n">$35.59M</td><td class="n neg">−$3.77M</td><td class="n neg">−9.6%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr><td>Jun</td><td class="n">$36.77M</td><td class="n">$35.95M</td><td class="n neg">−$0.82M</td><td class="n neg">−2.2%</td><td></td></tr>
+            <tr><td>Jul</td><td class="n">$37.56M</td><td class="n">$36.09M</td><td class="n neg">−$1.47M</td><td class="n neg">−3.9%</td><td></td></tr>
+            <tr><td>Aug</td><td class="n">$36.53M</td><td class="n">$34.21M</td><td class="n neg">−$2.32M</td><td class="n neg">−6.3%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr class="hl"><td>Sep</td><td class="n">$34.41M</td><td class="n">$35.15M</td><td class="n pos">+$0.74M</td><td class="n pos">+2.2%</td><td></td></tr>
+            <tr><td>Oct</td><td class="n">$42.69M</td><td class="n">$40.04M</td><td class="n neg">−$2.65M</td><td class="n neg">−6.2%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr><td>Nov</td><td class="n">$40.09M</td><td class="n">$34.68M</td><td class="n neg">−$5.41M</td><td class="n neg">−13.5%</td><td><span class="tag">&gt;5% below</span></td></tr>
+            <tr class="hl"><td>Dec</td><td class="n">$41.20M</td><td class="n">$41.66M</td><td class="n pos">+$0.46M</td><td class="n pos">+1.1%</td><td></td></tr>
+            <tr class="tot"><td>Year</td><td class="n">$447.24M</td><td class="n">$424.81M</td><td class="n neg">−$22.42M</td><td class="n neg">−5.0%</td><td>6 flagged</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="forecast">
+      <span class="label">07 · Forecast</span>
+      <h2>Forecasts and 2026 outlook</h2>
+      <div class="two">
+        <div>
+          <h3>Forecast accuracy (MAPE)</h3>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Method</th><th class="n">2024</th><th class="n">2025</th></tr></thead>
+              <tbody>
+                <tr class="hl"><td>Seasonal naive</td><td class="n">5.2%</td><td class="n">6.0%</td></tr>
+                <tr><td>ETS</td><td class="n">6.8%</td><td class="n">7.3%</td></tr>
+                <tr><td>Linear trend</td><td class="n">8.6%</td><td class="n">12.9%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Using the same month last year was the most accurate. Linear trend ignores seasonality, and ETS expected growth that didn't happen.</p>
+        </div>
+        <div>
+          <h3>2026 revenue scenarios</h3>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Scenario</th><th class="n">Volume</th><th class="n">Price</th><th class="n">Revenue</th></tr></thead>
+              <tbody>
+                <tr><td>Best</td><td class="n">+1%</td><td class="n">+2%</td><td class="n">$437.6M</td></tr>
+                <tr class="hl"><td>Base</td><td class="n">−3%</td><td class="n">−2%</td><td class="n">$403.8M</td></tr>
+                <tr><td>Worst</td><td class="n">−5%</td><td class="n">−3%</td><td class="n">$391.5M</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Built with Scenario Manager. A two-way data table (volume and price, ±5%) puts the full range at $383.4M to $468.4M. Goal Seek: holding sales flat would need about 2.1% more volume.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:40px">Methods I considered but didn't use</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Method</th><th>Why not</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Moving average</strong></td><td class="tw">Ignores seasonality, so it would miss the yearly peaks in October and December.</td></tr>
+            <tr><td><strong>ARIMA / SARIMA</strong></td><td class="tw">Needs Python or R, works best with more than 60 monthly data points, and is hard to explain to non-technical readers.</td></tr>
+            <tr><td><strong>Regression with drivers</strong></td><td class="tw">The dataset has no outside variables such as population or the economy, so drivers would have to be sourced and justified separately.</td></tr>
+            <tr><td><strong>Machine learning</strong></td><td class="tw">Random forest, XGBoost, or Prophet would likely overfit five years of monthly data, when a simple model already reaches 5–6% error.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Holt-Winters exponential smoothing is already covered: Excel's FORECAST.ETS is a version of it.</p>
+    </section>
+
+    <section id="recs">
+      <span class="label">08 · Recommendations</span>
+      <h2>What I would do next</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Recommendation</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="tw"><strong>Plan 2026 around $403.8M</strong></td><td class="tw">The decline lasted all of 2025, so a flat or growth budget is likely to miss.</td></tr>
+            <tr><td class="tw"><strong>Use seasonal naive as the baseline forecast</strong></td><td class="tw">Lowest error in both years. Keep ETS as a cross-check.</td></tr>
+            <tr><td class="tw"><strong>Test a trend-adjusted seasonal naive</strong></td><td class="tw">Last year's same month × (1 + recent year-over-year growth). Plain seasonal naive assumed no decline and overshot 2025 by 5.3%; adding the trend may close that gap.</td></tr>
+            <tr><td class="tw"><strong>Watch Whiskey and Vodka first</strong></td><td class="tw">60% of sales. A 5% change in Whiskey alone moves revenue by $8.1M.</td></tr>
+            <tr><td class="tw"><strong>Review Brandy and Other</strong></td><td class="tw">Both fell more than 9%. Brandy fell the fastest (−14.2%).</td></tr>
+            <tr><td class="tw"><strong>Stock ahead of October and December</strong></td><td class="tw">These are the yearly peaks. November had the largest miss in 2025.</td></tr>
+            <tr><td class="tw"><strong>Track bottle counts monthly</strong></td><td class="tw">Volume caused most of the decline, so it is the earliest warning sign.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="limits">
+      <span class="label">09 · Limitations</span>
+      <h2>What this analysis can't tell you</h2>
+      <ul class="list">
+        <li><strong>Wholesale, not retail.</strong> The data is the state's sales to licensed retailers, not what consumers bought.</li>
+        <li><strong>Seasonal naive repeats last year.</strong> It can't predict a change in trend, so it will miss a turnaround or a sharper decline.</li>
+        <li><strong>No outside factors.</strong> Population, the economy, and competing products are not included.</li>
+        <li><strong>Order timing.</strong> Sales are counted by order date, so an early or late order can shift dollars between months and affect single-month variances.</li>
+      </ul>
+    </section>
+  </main>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Andres Martinez</span>
+    <a href="index.html">← Back to portfolio</a>
+  </div>
+</footer>
+
+<script>
+// Highlight the section currently in view
+(function () {
+  const links = [...document.querySelectorAll(".toc a")];
+  const map = Object.fromEntries(links.map(a => [a.hash.slice(1), a]));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.remove("active"));
+      map[e.target.id].classList.add("active");
+    });
+  }, { rootMargin: "-25% 0px -65% 0px" });
+  document.querySelectorAll("main section").forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>
