@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ---------- Colors (edit here) - matched to the Excel dashboard ---------- */
 :root {
   color-scheme: light;
   --bg: #ffffff;
@@ -18,10 +17,10 @@
   --text-2: #374151;
   --muted: #6b7280;
   --border: #d9dee7;
-  --accent: #2f5597;      /* dark dashboard blue (text-safe) */
-  --accent-bg: #dae3f3;   /* light dashboard blue */
-  --brand: #4472c4;       /* dashboard blue */
-  --down: #c00000;        /* dashboard red arrows */
+  --accent: #2f5597;      
+  --accent-bg: #dae3f3;  
+  --brand: #4472c4;       
+  --down: #c00000;        
   --up: #2e7d32;
   --head-bg: #4472c4;
   --head-text: #ffffff;
@@ -79,6 +78,12 @@ strong { color: var(--text); font-weight: 600; }
 .title p { color: var(--head-text); font-size: 18px; margin-top: 16px; max-width: 80ch; }
 .facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin-top: 24px; font-size: 14px; color: var(--head-muted); }
 .facts b { color: var(--head-text); font-weight: 500; }
+.dl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #ffffff; color: #2f5597 !important; font-weight: 600; font-size: 14px; text-decoration: none; border-radius: 4px; }
+.btn:hover { background: #dae3f3; }
+.years { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--head-muted); }
+.years a { padding: 6px 10px; border: 1px solid rgba(255,255,255,.55); border-radius: 4px; font-family: "IBM Plex Mono", monospace; font-size: 13px; text-decoration: none; }
+.years a:hover { background: rgba(255,255,255,.15); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--head-border); }
 .stat { padding: 22px 20px 28px 0; }
 .stat + .stat { padding-left: 20px; border-left: 1px solid var(--head-border); }
@@ -208,6 +213,10 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
         <span>Data <b>Iowa Open Data Portal</b></span>
         <span>Period <b>2021–2025</b></span>
       </div>
+      <div class="dl">
+        <a class="btn" href="files/Iowa_Liquor_Sales_Analysis.xlsx" download>↓ Download Excel workbook</a>
+        <div class="years"><span>Source data:</span><a href="https://data.iowa.gov/catalog/dataset/1258" target="_blank" rel="noopener">2021</a><a href="https://data.iowa.gov/catalog/dataset/1259" target="_blank" rel="noopener">2022</a><a href="https://data.iowa.gov/catalog/dataset/1260" target="_blank" rel="noopener">2023</a><a href="https://data.iowa.gov/catalog/dataset/1261" target="_blank" rel="noopener">2024</a><a href="https://data.iowa.gov/catalog/dataset/1262" target="_blank" rel="noopener">2025</a></div>
+      </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="v">$424.8M</div><div class="k">2025 sales, −5.0%</div></div>
@@ -241,7 +250,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
         <div>
           <p>Iowa controls wholesale liquor distribution and publishes every sale to licensed retailers as open data. That gives a full transaction record across several years, which is rare for public sales data.</p>
           <p>I set out to answer three questions: how accurately can monthly sales be forecast, what caused the 2025 decline, and what should 2026 revenue look like?</p>
-          <!-- TODO: add link to the dataset -->
+          <p>The data comes from the Iowa Open Data Portal, one dataset per year: <a href="https://data.iowa.gov/catalog/dataset/1258" target="_blank" rel="noopener">2021</a>, <a href="https://data.iowa.gov/catalog/dataset/1259" target="_blank" rel="noopener">2022</a>, <a href="https://data.iowa.gov/catalog/dataset/1260" target="_blank" rel="noopener">2023</a>, <a href="https://data.iowa.gov/catalog/dataset/1261" target="_blank" rel="noopener">2024</a>, <a href="https://data.iowa.gov/catalog/dataset/1262" target="_blank" rel="noopener">2025</a>.</p>
         </div>
         <div class="panel">
           <h3>Data preparation</h3>
@@ -352,7 +361,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 
       <h3 style="margin-top:36px">Sales by category</h3>
       <div class="tbl">
-        <!-- TODO: confirm 2025 sales against PVM sheet column C -->
+        
         <table>
           <thead><tr><th>Category</th><th class="n">2025 sales</th><th class="n">Change vs. 2024</th></tr></thead>
           <tbody>
@@ -486,7 +495,6 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 </footer>
 
 <script>
-// Highlight the section currently in view
 (function () {
   const links = [...document.querySelectorAll(".toc a")];
   const map = Object.fromEntries(links.map(a => [a.hash.slice(1), a]));
